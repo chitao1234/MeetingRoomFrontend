@@ -89,7 +89,38 @@ export default defineComponent({
 
     const formatIpAddress = (ipAddress: string): string => {
       if (!ipAddress) return '-'
-      return ipAddress
+      
+      try {
+        // Decode base64 string
+        const decoded = atob(ipAddress)
+        
+        // If length is 4, it's a binary IPv4
+        if (decoded.length === 4) {
+          return Array.from(decoded)
+            .map(char => char.charCodeAt(0))
+            .join('.')
+        }
+        
+        // If length is 16, it's a binary IPv6
+        if (decoded.length === 16) {
+          return Array.from(decoded)
+            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .reduce((acc, octet, i) => {
+              if (i % 2 === 0) {
+                acc.push(octet)
+              } else {
+                acc[acc.length - 1] += octet
+              }
+              return acc
+            }, [] as string[])
+            .join(':')
+        }
+        
+        // If neither 4 nor 16 bytes, assume it's an encoded string representation
+        return decoded
+      } catch (e) {
+        return 'Invalid IP'
+      }
     }
 
     return {
