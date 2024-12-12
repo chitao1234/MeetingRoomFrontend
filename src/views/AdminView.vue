@@ -37,24 +37,24 @@
           <h3>Create User</h3>
           <form @submit.prevent="createNewUser">
             <div class="form-group">
-              <label>Username:</label>
-              <input v-model="newUser.username" required />
+              <label for="username">Username:</label>
+              <input id="username" v-model="newUser.username" required />
             </div>
             <div class="form-group">
-              <label>Password:</label>
-              <input v-model="newUser.password" type="password" required />
+              <label for="password">Password:</label>
+              <input id="password" v-model="newUser.password" type="password" required />
             </div>
             <div class="form-group">
-              <label>Email:</label>
-              <input v-model="newUser.email" type="email" required />
+              <label for="email">Email:</label>
+              <input id="email" v-model="newUser.email" type="email" required />
             </div>
             <div class="form-group">
-              <label>Phone:</label>
-              <input v-model="newUser.phone" />
+              <label for="phone">Phone:</label>
+              <input id="phone" v-model="newUser.phone" />
             </div>
             <div class="form-group">
-              <label>Role:</label>
-              <select v-model="newUser.role">
+              <label for="role">Role:</label>
+              <select id="role" v-model="newUser.role">
                 <option value="USER">User</option>
                 <option value="ADMIN">Admin</option>
               </select>
@@ -72,20 +72,20 @@
           <h3>Edit User</h3>
           <form @submit.prevent="saveUserEdit">
             <div class="form-group">
-              <label>Username:</label>
-              <input v-model="editingUser.username" required />
+              <label for="edit-username">Username:</label>
+              <input id="edit-username" v-model="editingUser.username" required />
             </div>
             <div class="form-group">
-              <label>Email:</label>
-              <input v-model="editingUser.email" type="email" required />
+              <label for="edit-email">Email:</label>
+              <input id="edit-email" v-model="editingUser.email" type="email" required />
             </div>
             <div class="form-group">
-              <label>Phone:</label>
-              <input v-model="editingUser.phone" />
+              <label for="edit-phone">Phone:</label>
+              <input id="edit-phone" v-model="editingUser.phone" />
             </div>
             <div class="form-group">
-              <label>Role:</label>
-              <select v-model="editingUser.role">
+              <label for="edit-role">Role:</label>
+              <select id="edit-role" v-model="editingUser.role">
                 <option value="USER">User</option>
                 <option value="ADMIN">Admin</option>
               </select>
@@ -132,24 +132,24 @@
           <h3>Create Room</h3>
           <form @submit.prevent="createNewRoom">
             <div class="form-group">
-              <label>Name:</label>
-              <input v-model="newRoom.name" required />
+              <label for="room-name">Name:</label>
+              <input id="room-name" v-model="newRoom.name" required />
             </div>
             <div class="form-group">
-              <label>Capacity:</label>
-              <input v-model="newRoom.capacity" type="number" required />
+              <label for="room-capacity">Capacity:</label>
+              <input id="room-capacity" v-model="newRoom.capacity" type="number" required />
             </div>
             <div class="form-group">
-              <label>Room Number:</label>
-              <input v-model="newRoom.roomNumber" required />
+              <label for="room-number">Room Number:</label>
+              <input id="room-number" v-model="newRoom.roomNumber" required />
             </div>
             <div class="form-group">
-              <label>Photo URL:</label>
-              <input v-model="newRoom.photoUrl" type="url" />
+              <label for="room-photo">Photo URL:</label>
+              <input id="room-photo" v-model="newRoom.photoUrl" type="url" />
             </div>
             <div class="form-group">
-              <label>Description:</label>
-              <textarea v-model="newRoom.description"></textarea>
+              <label for="room-description">Description:</label>
+              <textarea id="room-description" v-model="newRoom.description"></textarea>
             </div>
             <div class="modal-actions">
               <button type="submit">Create</button>
@@ -164,24 +164,24 @@
           <h3>Edit Room</h3>
           <form @submit.prevent="saveRoomEdit">
             <div class="form-group">
-              <label>Name:</label>
-              <input v-model="editingRoom.name" required />
+              <label for="edit-room-name">Name:</label>
+              <input id="edit-room-name" v-model="editingRoom.name" required />
             </div>
             <div class="form-group">
-              <label>Capacity:</label>
-              <input v-model="editingRoom.capacity" type="number" required />
+              <label for="edit-room-capacity">Capacity:</label>
+              <input id="edit-room-capacity" v-model="editingRoom.capacity" type="number" required />
             </div>
             <div class="form-group">
-              <label>Room Number:</label>
-              <input v-model="editingRoom.roomNumber" required />
+              <label for="edit-room-number">Room Number:</label>
+              <input id="edit-room-number" v-model="editingRoom.roomNumber" required />
             </div>
             <div class="form-group">
-              <label>Photo URL:</label>
-              <input v-model="editingRoom.photoUrl" type="url" />
+              <label for="edit-room-photo">Photo URL:</label>
+              <input id="edit-room-photo" v-model="editingRoom.photoUrl" type="url" />
             </div>
             <div class="form-group">
-              <label>Description:</label>
-              <textarea v-model="editingRoom.description"></textarea>
+              <label for="edit-room-description">Description:</label>
+              <textarea id="edit-room-description" v-model="editingRoom.description"></textarea>
             </div>
             <div class="modal-actions">
               <button type="submit">Save</button>

@@ -5,8 +5,9 @@
     <!-- Search filters -->
     <div class="filters">
       <div class="form-group">
-        <label>Start Time (optional)</label>
+        <label for="startTime">Start Time (optional)</label>
         <input 
+          id="startTime"
           type="datetime-local" 
           v-model="filters.startDateTime" 
           :min="currentDateTime"
@@ -14,8 +15,9 @@
         >
       </div>
       <div class="form-group">
-        <label>End Time (optional)</label>
+        <label for="endTime">End Time (optional)</label>
         <input 
+          id="endTime"
           type="datetime-local" 
           v-model="filters.endDateTime"
           :min="filters.startDateTime"
@@ -23,8 +25,9 @@
         >
       </div>
       <div class="form-group">
-        <label>Attendees (optional)</label>
+        <label for="attendees">Attendees (optional)</label>
         <input 
+          id="attendees"
           type="number" 
           v-model="filters.attendees" 
           min="1" 
@@ -49,7 +52,7 @@
     <!-- Rooms list -->
     <div class="rooms-grid">
       <div v-for="room in rooms" :key="room.meetingRoomId" class="room-card">
-        <img v-if="room.photoUrl" :src="room.photoUrl" class="room-photo" alt="Room photo">
+        <img v-if="room.photoUrl" :src="room.photoUrl" class="room-photo" alt="Room">
         <h3>{{ room.name }}</h3>
         <p class="room-number">Room: {{ room.roomNumber }}</p>
         <p class="capacity">Capacity: {{ room.capacity }} people</p>
@@ -70,12 +73,13 @@
         <h2>Book Room: {{ selectedRoom?.name }}</h2>
         <form @submit.prevent="handleBooking">
           <div class="form-group">
-            <label>Meeting Subject</label>
-            <input type="text" v-model="bookingForm.meetingSubject" required>
+            <label for="meetingSubject">Meeting Subject</label>
+            <input id="meetingSubject" type="text" v-model="bookingForm.meetingSubject" required>
           </div>
           <div class="form-group">
-            <label>Number of Attendees</label>
+            <label for="bookingAttendees">Number of Attendees</label>
             <input 
+              id="bookingAttendees"
               type="number" 
               v-model="bookingForm.attendees" 
               :max="selectedRoom?.capacity" 
