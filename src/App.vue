@@ -3,12 +3,13 @@
     <!-- Desktop nav -->
     <nav v-if="isAuthenticated" class="desktop-nav">
       <div class="nav-links">
-        <router-link class="nav-link" to="/">Home</router-link> |
-        <router-link class="nav-link" to="/rooms">Meeting Rooms</router-link> |
-        <router-link class="nav-link" to="/bookings">My Bookings</router-link>
-        <template v-if="isAdmin">| <router-link class="nav-link" to="/admin">Admin</router-link></template>
+        <router-link class="nav-link" to="/">{{ $t('message.nav.home') }}</router-link> |
+        <router-link class="nav-link" to="/rooms">{{ $t('message.nav.meetingRooms') }}</router-link> |
+        <router-link class="nav-link" to="/bookings">{{ $t('message.nav.myBookings') }}</router-link>
+        <template v-if="isAdmin">| <router-link class="nav-link" to="/admin">{{ $t('message.nav.admin') }}</router-link></template>
       </div>
       <div class="nav-right">
+        <LanguageSwitcher />
         <router-link to="/profile" class="avatar-link">
           <img 
             :src="userInfo.avatarUrl || xidian" 
@@ -16,7 +17,7 @@
             class="avatar-img"
           />
         </router-link>
-        <button @click="logout" class="btn btn-danger">Logout</button>
+        <button @click="logout" class="btn btn-danger">{{ $t('message.nav.logout') }}</button>
       </div>
     </nav>
 
@@ -26,20 +27,33 @@
         <button class="btn btn-primary menu-btn" @click="showMobileMenu = !showMobileMenu">
           ☰
         </button>
-        <router-link to="/profile" class="avatar-link">
-          <img 
-            :src="userInfo.avatarUrl || xidian" 
-            :alt="userInfo.username"
-            class="avatar-img"
-          />
-        </router-link>
+        <div class="mobile-right">
+          <LanguageSwitcher />
+          <router-link to="/profile" class="avatar-link">
+            <img 
+              :src="userInfo.avatarUrl || xidian" 
+              :alt="userInfo.username"
+              class="avatar-img"
+            />
+          </router-link>
+        </div>
       </div>
       <div class="mobile-menu" :class="{ active: showMobileMenu }">
-        <router-link class="nav-link" to="/" @click="showMobileMenu = false">Home</router-link>
-        <router-link class="nav-link" to="/rooms" @click="showMobileMenu = false">Meeting Rooms</router-link>
-        <router-link class="nav-link" to="/bookings" @click="showMobileMenu = false">My Bookings</router-link>
-        <router-link class="nav-link" v-if="isAdmin" to="/admin" @click="showMobileMenu = false">Admin</router-link>
-        <button @click="logout" class="btn btn-danger w-100">Logout</button>
+        <router-link class="nav-link" to="/" @click="showMobileMenu = false">
+          {{ $t('message.nav.home') }}
+        </router-link>
+        <router-link class="nav-link" to="/rooms" @click="showMobileMenu = false">
+          {{ $t('message.nav.meetingRooms') }}
+        </router-link>
+        <router-link class="nav-link" to="/bookings" @click="showMobileMenu = false">
+          {{ $t('message.nav.myBookings') }}
+        </router-link>
+        <router-link class="nav-link" v-if="isAdmin" to="/admin" @click="showMobileMenu = false">
+          {{ $t('message.nav.admin') }}
+        </router-link>
+        <button @click="logout" class="btn btn-danger w-100">
+          {{ $t('message.nav.logout') }}
+        </button>
       </div>
     </nav>
 
@@ -54,6 +68,10 @@ import { checkAuth, checkIsAdmin, logout as authLogout } from '@/api/auth'
 import { getUser } from '@/api/user'
 import type { User } from '@/api/user'
 import xidian from '@/assets/xidian.png'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { locale } = useI18n()
 
 const router = useRouter()
 const route = useRoute()
@@ -98,6 +116,18 @@ const logout = async () => {
   isAdmin.value = false
   router.push('/login')
 }
+
+// Set initial locale from localStorage or browser preference
+onMounted(() => {
+  const savedLocale = localStorage.getItem('locale')
+  if (savedLocale) {
+    locale.value = savedLocale
+  } else {
+    // Use browser language preference if available
+    const browserLang = navigator.language.toLowerCase()
+    locale.value = browserLang.startsWith('zh') ? 'zh' : 'en'
+  }
+})
 </script>
 
 <style scoped>
@@ -204,5 +234,11 @@ const logout = async () => {
 /* Update mobile menu styles */
 .mobile-menu {
   top: calc(100% + 0.5rem);
+}
+
+.mobile-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 </style>

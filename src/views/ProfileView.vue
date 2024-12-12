@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="card">
-      <h2 class="text-center mb-4">Edit Profile</h2>
+      <h2 class="text-center mb-4">{{ $t('message.editProfile') }}</h2>
       
       <div class="profile-avatar mb-4">
         <img 
@@ -17,13 +17,13 @@
           ref="fileInput"
         />
         <button class="btn btn-secondary" @click="triggerFileInput">
-          Change Avatar
+          {{ $t('message.changeAvatar') }}
         </button>
       </div>
 
       <form @submit.prevent="updateProfile" class="form-group">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">{{ $t('message.username') }}</label>
           <input 
             type="text" 
             id="username" 
@@ -33,7 +33,7 @@
         </div>
 
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="email">{{ $t('message.email') }}</label>
           <input 
             type="email" 
             id="email" 
@@ -43,7 +43,7 @@
         </div>
 
         <div class="form-group">
-          <label for="phone">Phone</label>
+          <label for="phone">{{ $t('message.phone') }}</label>
           <input 
             type="tel" 
             id="phone" 
@@ -53,10 +53,10 @@
 
         <div class="flex gap-3 justify-center mt-4">
           <button type="submit" class="btn btn-primary">
-            Save Changes
+            {{ $t('message.saveChanges') }}
           </button>
           <router-link to="/" class="btn btn-secondary">
-            Cancel
+            {{ $t('message.cancel') }}
           </router-link>
         </div>
       </form>

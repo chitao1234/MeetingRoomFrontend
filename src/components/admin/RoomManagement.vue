@@ -1,8 +1,10 @@
 <template>
   <div class="mb-5">
     <div class="flex justify-between items-center mb-4">
-      <h2>Room Management</h2>
-      <button class="btn btn-primary" @click="$emit('showCreateModal')">Create Room</button>
+      <h2>{{ $t('message.management.roomList') }}</h2>
+      <button class="btn btn-primary" @click="$emit('showCreateModal')">
+        {{ $t('message.management.createNew') }}
+      </button>
     </div>
     
     <div class="table-container">
@@ -10,11 +12,11 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Capacity</th>
-            <th>Area (m²)</th>
-            <th>Room Number</th>
-            <th>Actions</th>
+            <th>{{ $t('message.forms.roomName') }}</th>
+            <th>{{ $t('message.forms.capacity') }}</th>
+            <th>{{ $t('message.forms.area') }}</th>
+            <th>{{ $t('message.forms.roomNumber') }}</th>
+            <th>{{ $t('message.management.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -26,8 +28,12 @@
             <td>{{ room.roomNumber }}</td>
             <td>
               <div class="flex gap-2">
-                <button @click="$emit('edit', room)" class="btn btn-primary">Edit</button>
-                <button @click="$emit('delete', room.meetingRoomId)" class="btn btn-danger">Delete</button>
+                <button @click="$emit('edit', room)" class="btn btn-primary">
+                  {{ $t('message.edit') }}
+                </button>
+                <button @click="$emit('delete', room.meetingRoomId)" class="btn btn-danger">
+                  {{ $t('message.delete') }}
+                </button>
               </div>
             </td>
           </tr>
@@ -37,18 +43,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { defineProps } from 'vue'
 import type { MeetingRoom } from '@/api/meetingRoom'
 
-export default defineComponent({
-  name: 'RoomManagement',
-  props: {
-    rooms: {
-      type: Array as () => MeetingRoom[],
-      required: true
-    }
-  },
-  emits: ['showCreateModal', 'edit', 'delete']
-})
+defineProps<{
+  rooms: MeetingRoom[]
+}>()
 </script> 

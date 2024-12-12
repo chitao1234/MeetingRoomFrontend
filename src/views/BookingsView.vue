@@ -1,16 +1,16 @@
 <template>
   <div class="container p-4">
-    <h1 class="mb-4">My Bookings</h1>
+    <h1 class="mb-4">{{ $t('message.myBookings') }}</h1>
     
     <!-- Booking filters -->
     <div class="status-filters mb-4">
       <button 
-        v-for="status in ['ALL', 'PENDING', 'APPROVED', 'REJECTED']" 
+        v-for="status in ['all', 'pending', 'approved', 'rejected']" 
         :key="status"
-        :class="['status-btn', selectedStatus === status ? 'active' : '']"
-        @click="selectedStatus = status"
+        :class="['status-btn', selectedStatus === status.toUpperCase() ? 'active' : '']"
+        @click="selectedStatus = status.toUpperCase()"
       >
-        {{ status }}
+        {{ $t(`message.status.${status}`) }}
       </button>
     </div>
 
@@ -20,7 +20,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-4">
           <h3 class="mb-2 md:mb-0">{{ booking.meetingSubject }}</h3>
           <span :class="['status-badge', booking.status.toLowerCase()]">
-            {{ booking.status }}
+            {{ $t(`message.status.${booking.status.toLowerCase()}`) }}
           </span>
         </div>
         
@@ -28,29 +28,36 @@
           <div class="grid gap-2 mb-3">
             <template v-if="isDifferentDay(booking.startTime, booking.endTime)">
               <p>
-                <strong>Start:</strong> 
+                <strong>{{ $t('message.bookingDetails.start') }}:</strong> 
                 {{ formatDateTime(booking.startTime, true) }}
               </p>
               <p>
-                <strong>End:</strong>
+                <strong>{{ $t('message.bookingDetails.end') }}:</strong>
                 {{ formatDateTime(booking.endTime, true) }}
               </p>
             </template>
             <template v-else>
               <p>
-                <strong>Date:</strong> 
+                <strong>{{ $t('message.bookingDetails.date') }}:</strong> 
                 {{ new Date(booking.startTime).toLocaleDateString() }}
               </p>
               <p>
-                <strong>Time:</strong>
+                <strong>{{ $t('message.bookingDetails.time') }}:</strong>
                 {{ formatDateTime(booking.startTime) }} - {{ formatDateTime(booking.endTime) }}
               </p>
             </template>
           </div>
-          <p class="mb-2"><strong>Room:</strong> {{ booking.roomNumber }}</p>
-          <p class="mb-2"><strong>Attendees:</strong> {{ booking.participantCount }}</p>
+          <p class="mb-2">
+            <strong>{{ $t('message.bookingDetails.room') }}:</strong> 
+            {{ booking.roomNumber }}
+          </p>
+          <p class="mb-2">
+            <strong>{{ $t('message.bookingDetails.attendees') }}:</strong> 
+            {{ booking.participantCount }}
+          </p>
           <p v-if="booking.rejectionReason" class="error mb-2">
-            <strong>Rejection Reason:</strong> {{ booking.rejectionReason }}
+            <strong>{{ $t('message.bookingDetails.rejectionReason') }}:</strong> 
+            {{ booking.rejectionReason }}
           </p>
         </div>
 
@@ -60,7 +67,7 @@
             class="btn btn-danger"
             @click="cancelBooking(booking.reservationId)"
           >
-            Cancel Booking
+            {{ $t('message.cancelBooking') }}
           </button>
         </div>
       </div>
@@ -73,6 +80,9 @@ import { ref, computed, onMounted } from 'vue'
 import { getUserReservations, deleteReservation } from '@/api/reservation'
 import { getMeetingRoom } from '@/api/meetingRoom'
 import type { Reservation } from '@/api/reservation'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Add interface for room info
 interface BookingWithRoom extends Reservation {
@@ -147,11 +157,11 @@ async function loadBookings() {
 
 // Cancel a booking
 async function cancelBooking(reservationId: number) {
-  if (!confirm('Are you sure you want to cancel this booking?')) return
+  if (!confirm(t('message.confirmCancel'))) return
   
   try {
     await deleteReservation(reservationId)
-    await loadBookings() // Refresh the list
+    await loadBookings()
   } catch (error) {
     console.error('Failed to cancel booking:', error)
   }

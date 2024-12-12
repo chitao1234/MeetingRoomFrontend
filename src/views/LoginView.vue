@@ -1,9 +1,9 @@
 <template>
   <div class="flex justify-center items-center min-h-80vh">
     <form @submit.prevent="handleLogin" class="card">
-      <h2 class="mb-4">Login</h2>
+      <h2 class="mb-4">{{ $t('message.login') }}</h2>
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">{{ $t('message.username') }}</label>
         <input
           type="text"
           id="username"
@@ -12,7 +12,7 @@
         />
       </div>
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">{{ $t('message.password') }}</label>
         <input
           type="password"
           id="password"
@@ -21,11 +21,12 @@
         />
       </div>
       <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
-        {{ isLoading ? 'Logging in...' : 'Login' }}
+        {{ isLoading ? $t('message.loggingIn') : $t('message.login') }}
       </button>
-      <p v-if="error" class="error mt-3">{{ error }}</p>
+      <p v-if="error" class="error mt-3">{{ $t('message.invalidCredentials') }}</p>
       <p class="text-center mt-3">
-        Don't have an account? <router-link to="/register">Register here</router-link>
+        {{ $t('message.noAccount') }}
+        <router-link to="/register">{{ $t('message.registerHere') }}</router-link>
       </p>
     </form>
   </div>
@@ -35,7 +36,9 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { login, type LoginCredentials, setAuthToken } from '@/api/auth'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const isLoading = ref(false)
 const error = ref('')
@@ -53,7 +56,7 @@ const handleLogin = async () => {
     setAuthToken(response.token)
     router.push('/')
   } catch (e) {
-    error.value = 'Invalid username or password'
+    error.value = t('message.invalidCredentials')
   } finally {
     isLoading.value = false
   }

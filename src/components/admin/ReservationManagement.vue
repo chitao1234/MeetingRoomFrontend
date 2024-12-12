@@ -1,18 +1,18 @@
 <template>
   <div class="mb-5">
-    <h2 class="mb-4">Reservations</h2>
+    <h2 class="mb-4">{{ $t('message.management.reservationList') }}</h2>
     <div class="table-container">
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>Room</th>
-            <th>User</th>
-            <th>Subject</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{{ $t('message.roomDetails.room') }}</th>
+            <th>{{ $t('message.users') }}</th>
+            <th>{{ $t('message.bookingDetails.subject') }}</th>
+            <th>{{ $t('message.startTime') }}</th>
+            <th>{{ $t('message.endTime') }}</th>
+            <th>{{ $t('message.status') }}</th>
+            <th>{{ $t('message.management.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -25,7 +25,7 @@
             <td>{{ formatDateTime(reservation.endTime) }}</td>
             <td>
               <span :class="['status-badge', reservation.status.toLowerCase()]">
-                {{ reservation.status }}
+                {{ $t(`message.status.${reservation.status.toLowerCase()}`) }}
               </span>
             </td>
             <td>
@@ -34,13 +34,13 @@
                   class="btn btn-primary"
                   @click="$emit('approve', reservation.reservationId)"
                 >
-                  Approve
+                  {{ $t('message.management.approve') }}
                 </button>
                 <button 
                   class="btn btn-danger"
                   @click="$emit('reject', reservation.reservationId)"
                 >
-                  Reject
+                  {{ $t('message.management.reject') }}
                 </button>
               </div>
             </td>
@@ -51,28 +51,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
+import { PropType } from 'vue'
 import { formatDateTime } from '@/utils/dateTime'
 import type { Reservation } from '@/api/reservation'
 
-export default defineComponent({
-  name: 'ReservationManagement',
-  props: {
-    reservations: {
-      type: Array as () => Reservation[],
-      required: true
-    },
-    getUserName: {
-      type: Function as PropType<(userId: number) => string>,
-      required: true
-    }
+defineProps({
+  reservations: {
+    type: Array as PropType<Reservation[]>,
+    required: true
   },
-  emits: ['approve', 'reject'],
-  setup() {
-    return {
-      formatDateTime
-    }
+  getUserName: {
+    type: Function as PropType<(userId: number) => string>,
+    required: true
   }
 })
 </script> 

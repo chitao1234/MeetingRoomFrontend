@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="handleSubmit" class="card">
     <div class="form-group">
-      <label for="room-name">Name:</label>
+      <label for="room-name">{{ $t('message.forms.roomName') }}</label>
       <input 
         id="room-name" 
         v-model="formData.name" 
@@ -10,19 +10,19 @@
       />
     </div>
     <div class="form-group">
-      <label for="room-capacity">Capacity:</label>
+      <label for="room-capacity">{{ $t('message.forms.capacity') }}</label>
       <input id="room-capacity" v-model="formData.capacity" type="number" required />
     </div>
     <div class="form-group">
-      <label for="room-area">Area (m²):</label>
+      <label for="room-area">{{ $t('message.forms.area') }}</label>
       <input id="room-area" v-model="formData.area" type="number" min="0" step="0.1" />
     </div>
     <div class="form-group">
-      <label for="room-number">Room Number:</label>
+      <label for="room-number">{{ $t('message.forms.roomNumber') }}</label>
       <input id="room-number" v-model="formData.roomNumber" required />
     </div>
     <div class="form-group">
-      <label for="room-photo">Photo:</label>
+      <label for="room-photo">{{ $t('message.forms.photo') }}</label>
       <div class="photo-upload card p-3">
         <input 
           type="file" 
@@ -40,7 +40,7 @@
             class="preview-image"
           />
           <div v-else class="placeholder text-center">
-            <span class="text-light">No image selected</span>
+            <span class="text-light">{{ $t('message.forms.noImage') }}</span>
           </div>
         </div>
         <div class="upload-actions mt-3">
@@ -49,7 +49,7 @@
             class="btn btn-secondary" 
             @click="triggerFileInput"
           >
-            {{ formData.photoUrl ? 'Change Photo' : 'Upload Photo' }}
+            {{ formData.photoUrl ? $t('message.forms.changePhoto') : $t('message.forms.uploadPhoto') }}
           </button>
           <button 
             v-if="formData.photoUrl" 
@@ -57,21 +57,23 @@
             class="btn btn-danger" 
             @click="removePhoto"
           >
-            Remove
+            {{ $t('message.forms.removePhoto') }}
           </button>
         </div>
-        <p v-if="uploadError" class="error-message mt-2">{{ uploadError }}</p>
+        <p v-if="uploadError" class="error-message mt-2">{{ $t('message.forms.uploadError') }}</p>
       </div>
     </div>
     <div class="form-group">
-      <label for="room-description">Description:</label>
+      <label for="room-description">{{ $t('message.forms.description') }}</label>
       <textarea id="room-description" v-model="formData.description"></textarea>
     </div>
     <div class="modal-actions">
       <button type="submit" class="btn btn-primary" :disabled="isUploading">
-        {{ isEdit ? 'Save' : 'Create' }}
+        {{ isEdit ? $t('message.saveChanges') : $t('message.submit') }}
       </button>
-      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancel</button>
+      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
+        {{ $t('message.cancel') }}
+      </button>
     </div>
   </form>
 </template>

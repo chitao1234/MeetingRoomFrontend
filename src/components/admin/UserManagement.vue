@@ -1,8 +1,10 @@
 <template>
   <div class="mb-5">
     <div class="flex justify-between items-center mb-4">
-      <h2>User Management</h2>
-      <button class="btn btn-primary" @click="$emit('showCreateModal')">Create User</button>
+      <h2>{{ $t('message.management.userList') }}</h2>
+      <button class="btn btn-primary" @click="$emit('showCreateModal')">
+        {{ $t('message.management.createNew') }}
+      </button>
     </div>
     
     <div class="table-container">
@@ -10,10 +12,10 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
+            <th>{{ $t('message.username') }}</th>
+            <th>{{ $t('message.email') }}</th>
+            <th>{{ $t('message.forms.role') }}</th>
+            <th>{{ $t('message.management.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -21,11 +23,15 @@
             <td>{{ user.userId }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.role }}</td>
+            <td>{{ $t(`message.forms.role${user.role === 'USER' ? 'User' : 'Admin'}`) }}</td>
             <td>
               <div class="flex gap-2">
-                <button @click="$emit('edit', user)" class="btn btn-primary">Edit</button>
-                <button @click="$emit('delete', user.userId)" class="btn btn-danger">Delete</button>
+                <button @click="$emit('edit', user)" class="btn btn-primary">
+                  {{ $t('message.edit') }}
+                </button>
+                <button @click="$emit('delete', user.userId)" class="btn btn-danger">
+                  {{ $t('message.delete') }}
+                </button>
               </div>
             </td>
           </tr>
@@ -35,18 +41,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { defineProps } from 'vue'
 import type { User } from '@/api/user'
 
-export default defineComponent({
-  name: 'UserManagement',
-  props: {
-    users: {
-      type: Array as () => User[],
-      required: true
-    }
-  },
-  emits: ['showCreateModal', 'edit', 'delete']
-})
+defineProps<{
+  users: User[]
+}>()
 </script> 

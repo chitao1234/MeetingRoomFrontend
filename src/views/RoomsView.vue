@@ -1,11 +1,11 @@
 <template>
   <div class="rooms">
-    <h1>Meeting Rooms</h1>
+    <h1>{{ $t('message.meetingRooms') }}</h1>
     
     <!-- Search filters -->
     <div class="filters">
       <div class="form-group">
-        <label for="startTime">Start Time (optional)</label>
+        <label for="startTime">{{ $t('message.searchFilters.startTimeOptional') }}</label>
         <input 
           id="startTime"
           type="datetime-local" 
@@ -15,7 +15,7 @@
         >
       </div>
       <div class="form-group">
-        <label for="endTime">End Time (optional)</label>
+        <label for="endTime">{{ $t('message.searchFilters.endTimeOptional') }}</label>
         <input 
           id="endTime"
           type="datetime-local" 
@@ -25,7 +25,7 @@
         >
       </div>
       <div class="form-group">
-        <label for="attendees">Attendees (optional)</label>
+        <label for="attendees">{{ $t('message.searchFilters.attendeesOptional') }}</label>
         <input 
           id="attendees"
           type="number" 
@@ -40,13 +40,13 @@
         :disabled="!isQueryValid"
       >
         {{ isSearchValid && (filters.startDateTime || filters.endDateTime || filters.attendees) 
-          ? 'Search Available Rooms' 
-          : 'List Rooms' }}
+          ? $t('message.searchFilters.searchAvailableRooms') 
+          : $t('message.searchFilters.listRooms') }}
       </button>
     </div>
 
     <p v-if="rooms.length > 0 && !hasSearched" class="info-message">
-      To book a room, please search with your time and attendee requirements first.
+      {{ $t('message.searchInfo') }}
     </p>
 
     <!-- Rooms list -->
@@ -54,13 +54,15 @@
       <div v-for="room in rooms" :key="room.meetingRoomId" class="room-card">
         <img v-if="room.photoUrl" :src="room.photoUrl" class="room-photo" alt="Room">
         <h3>{{ room.name }}</h3>
-        <p class="room-number">Room: {{ room.roomNumber }}</p>
-        <p class="capacity">Capacity: {{ room.capacity }} people</p>
-        <p class="area" v-if="room.area">Size: {{ room.area }} m²</p>
+        <p class="room-number">{{ $t('message.roomDetails.room') }}: {{ room.roomNumber }}</p>
+        <p class="capacity">{{ $t('message.roomDetails.capacity') }}: {{ room.capacity }} {{ $t('message.roomDetails.people') }}</p>
+        <p class="area" v-if="room.area">{{ $t('message.roomDetails.size') }}: {{ room.area }} m²</p>
         
         <div class="description-container">
           <button class="toggle-description" @click="toggleDescription(room.meetingRoomId)">
-            {{ expandedDescriptions[room.meetingRoomId] ? 'Hide Details' : 'Show Details' }}
+            {{ expandedDescriptions[room.meetingRoomId] 
+              ? $t('message.roomDetails.hideDetails') 
+              : $t('message.roomDetails.showDetails') }}
           </button>
           <p class="description" v-show="expandedDescriptions[room.meetingRoomId]">
             {{ room.description }}
@@ -72,7 +74,9 @@
           @click="openBookingModal(room)"
           :disabled="!hasSearched"
         >
-          {{ hasSearched ? 'Book Now' : 'Set time and attendees to book' }}
+          {{ hasSearched 
+            ? $t('message.roomDetails.bookNow') 
+            : $t('message.roomDetails.setTimeAndAttendees') }}
         </button>
       </div>
     </div>
@@ -80,14 +84,14 @@
     <!-- Booking Modal -->
     <div v-if="showBookingModal" class="modal">
       <div class="modal-content">
-        <h2>Book Room: {{ selectedRoom?.name }}</h2>
+        <h2>{{ $t('message.bookingModal.bookRoom') }}: {{ selectedRoom?.name }}</h2>
         <form @submit.prevent="handleBooking">
           <div class="form-group">
-            <label for="meetingSubject">Meeting Subject</label>
+            <label for="meetingSubject">{{ $t('message.bookingModal.meetingSubject') }}</label>
             <input id="meetingSubject" type="text" v-model="bookingForm.meetingSubject" required>
           </div>
           <div class="form-group">
-            <label for="bookingAttendees">Number of Attendees</label>
+            <label for="bookingAttendees">{{ $t('message.bookingModal.numberOfAttendees') }}</label>
             <input 
               id="bookingAttendees"
               type="number" 
@@ -99,10 +103,12 @@
           </div>
           <div class="modal-actions">
             <button type="button" class="btn btn-secondary" @click="showBookingModal = false">
-              Cancel
+              {{ $t('message.cancel') }}
             </button>
             <button type="submit" class="btn btn-primary" :disabled="isLoading">
-              {{ isLoading ? 'Booking...' : 'Confirm Booking' }}
+              {{ isLoading 
+                ? $t('message.bookingModal.booking') 
+                : $t('message.bookingModal.confirmBooking') }}
             </button>
           </div>
         </form>

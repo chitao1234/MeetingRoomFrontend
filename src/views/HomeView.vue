@@ -1,23 +1,27 @@
 <template>
   <div class="home">
-    <h1>Welcome to Meeting Room Booking System</h1>
+    <h1>{{ $t('message.welcome') }}</h1>
     <div class="stats-container">
       <router-link to="/bookings" class="card stat-card">
-        <h3>Your Upcoming Bookings</h3>
+        <h3>{{ $t('message.dashboard.upcomingBookings') }}</h3>
         <div class="stat">{{ upcomingBookings.length }}</div>
       </router-link>
       <router-link to="/rooms" class="stat-card">
-        <h3>Available Rooms</h3>
+        <h3>{{ $t('message.dashboard.availableRooms') }}</h3>
         <div class="stat">{{ availableRooms.length }}</div>
       </router-link>
       <router-link to="/bookings" class="stat-card">
-        <h3>Total Bookings</h3>
+        <h3>{{ $t('message.dashboard.totalBookings') }}</h3>
         <div class="stat">{{ totalBookings }}</div>
       </router-link>
     </div>
     <div class="quick-actions">
-      <router-link to="/rooms" class="action-button">Book a Room</router-link>
-      <router-link to="/bookings" class="action-button">View My Bookings</router-link>
+      <router-link to="/rooms" class="action-button">
+        {{ $t('message.actions.bookRoom') }}
+      </router-link>
+      <router-link to="/bookings" class="action-button">
+        {{ $t('message.actions.viewBookings') }}
+      </router-link>
     </div>
     <NotificationList :userId="currentUser.userId" />
   </div>

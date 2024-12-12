@@ -8,11 +8,11 @@
         @click="activeSection = section.value"
         :class="['status-btn', activeSection === section.value ? 'active' : '']"
       >
-        {{ section.label }}
+        {{ $t(`message.${section.value}`) }}
       </button>
     </nav>
 
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <h1 class="mb-4">{{ $t('message.adminDashboard') }}</h1>
     
     <!-- Section Components -->
     <UserManagement
@@ -51,7 +51,7 @@
     <!-- Modals -->
     <BaseModal
       :show="showCreateUserModal"
-      title="Create User"
+      :title="$t('message.createUser')"
       @close="showCreateUserModal = false"
     >
       <UserForm
@@ -63,7 +63,7 @@
 
     <BaseModal
       :show="showEditUserModal"
-      title="Edit User"
+      :title="$t('message.editUser')"
       @close="showEditUserModal = false"
     >
       <UserForm
@@ -77,7 +77,7 @@
     <!-- Room Modals -->
     <BaseModal
       :show="showCreateRoomModal"
-      title="Create Room"
+      :title="$t('message.createRoom')"
       @close="showCreateRoomModal = false"
     >
       <RoomForm
@@ -89,7 +89,7 @@
 
     <BaseModal
       :show="showEditRoomModal"
-      title="Edit Room"
+      :title="$t('message.editRoom')"
       @close="showEditRoomModal = false"
     >
       <RoomForm
@@ -103,11 +103,11 @@
     <!-- Reject Reservation Modal -->
     <BaseModal
       :show="showRejectModal"
-      title="Reject Reservation"
+      :title="$t('message.rejectReservation')"
       @close="showRejectModal = false"
     >
       <div class="form-group">
-        <label for="reject-reason">Rejection Reason:</label>
+        <label for="reject-reason">{{ $t('message.rejectionReason') }}</label>
         <textarea
           id="reject-reason"
           v-model="rejectReason"
@@ -117,19 +117,23 @@
         ></textarea>
       </div>
       <div class="modal-actions">
-        <button @click="handleRejectReservation" class="btn btn-danger">Confirm Reject</button>
-        <button @click="showRejectModal = false" class="btn btn-secondary">Cancel</button>
+        <button @click="handleRejectReservation" class="btn btn-danger">
+          {{ $t('message.confirmReject') }}
+        </button>
+        <button @click="showRejectModal = false" class="btn btn-secondary">
+          {{ $t('message.cancel') }}
+        </button>
       </div>
     </BaseModal>
 
     <!-- Cleanup Logs Modal -->
     <BaseModal
       :show="showCleanupModal"
-      title="Cleanup Old Logs"
+      :title="$t('message.cleanupOldLogs')"
       @close="showCleanupModal = false"
     >
       <div class="form-group">
-        <label for="days-to-keep">Days to Keep:</label>
+        <label for="days-to-keep">{{ $t('message.daysToKeep') }}</label>
         <input 
           id="days-to-keep" 
           v-model="daysToKeep" 
@@ -139,8 +143,12 @@
         />
       </div>
       <div class="modal-actions">
-        <button @click="handleCleanupLogs" class="btn btn-danger">Confirm Cleanup</button>
-        <button @click="showCleanupModal = false" class="btn btn-secondary">Cancel</button>
+        <button @click="handleCleanupLogs" class="btn btn-danger">
+          {{ $t('message.confirmCleanup') }}
+        </button>
+        <button @click="showCleanupModal = false" class="btn btn-secondary">
+          {{ $t('message.cancel') }}
+        </button>
       </div>
     </BaseModal>
   </div>
@@ -174,10 +182,10 @@ export default defineComponent({
   },
   setup() {
     const sections = [
-      { value: 'users', label: 'Users' },
-      { value: 'rooms', label: 'Rooms' },
-      { value: 'reservations', label: 'Reservations' },
-      { value: 'logs', label: 'Logs' }
+      { value: 'users', label: 'users' },
+      { value: 'rooms', label: 'rooms' },
+      { value: 'reservations', label: 'reservations' },
+      { value: 'logs', label: 'logs' }
     ]
 
     const activeSection = ref('users')
