@@ -403,10 +403,19 @@ tbody tr:hover {
 }
 
 .select-compact {
-  padding: 0.4rem;
-  max-width: 160px;
-  font-size: 0.875rem;
-  height: 35px;
+  padding: 0.5rem;
+  width: 100%;
+  max-width: none;
+  font-size: 1rem;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+.select-compact:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .btn-compact {
@@ -424,5 +433,69 @@ tbody tr:hover {
   
   .btn-compact {
     width: auto;
+  }
+} 
+
+/* Log Management */
+.log-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.date-range {
+  flex: 2;
+  min-width: 300px;
+}
+
+.operation-filter {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Update existing styles */
+.select-compact {
+  padding: 0.5rem;
+  width: 100%;
+  max-width: none;
+  font-size: 1rem;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+.select-compact:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .log-filters {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .date-range,
+  .operation-filter {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .date-range .flex {
+    flex-direction: column;
+  }
+
+  .btn-compact {
+    width: 100%;
   }
 } 

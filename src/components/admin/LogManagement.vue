@@ -1,49 +1,65 @@
 <template>
   <div class="mb-5">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
-      <h2>System Logs</h2>
-      <div class="flex flex-wrap gap-2">
+    <div class="flex flex-col gap-4 mb-4">
+      <div class="flex justify-between items-center">
+        <h2>System Logs</h2>
         <button class="btn btn-danger btn-compact" @click="$emit('cleanup')">
           Cleanup Old Logs
         </button>
-        <div class="flex flex-wrap gap-2">
-          <input 
-            type="datetime-local" 
-            v-model="dateFilters.startDate"
-            class="form-input date-input"
-          />
-          <input 
-            type="datetime-local" 
-            v-model="dateFilters.endDate"
-            class="form-input date-input"
-          />
-          <button 
-            class="btn btn-primary btn-compact"
-            @click="$emit('filterDate', dateFilters)"
-          >
-            Filter
-          </button>
+      </div>
+
+      <div class="log-filters">
+        <!-- Date Range -->
+        <div class="date-range">
+          <label class="filter-label">Date Range:</label>
+          <div class="flex gap-2">
+            <input 
+              type="datetime-local" 
+              v-model="dateFilters.startDate"
+              class="form-input date-input"
+              placeholder="Start Date"
+            />
+            <input 
+              type="datetime-local" 
+              v-model="dateFilters.endDate"
+              class="form-input date-input"
+              placeholder="End Date"
+            />
+          </div>
         </div>
-        <select 
-          v-model="operationType" 
-          @change="$emit('filterType', operationType)" 
-          class="form-select select-compact"
+
+        <!-- Operation Type -->
+        <div class="operation-filter">
+          <label class="filter-label">Operation Type:</label>
+          <select 
+            v-model="operationType" 
+            @change="$emit('filterType', operationType)" 
+            class="form-select select-compact"
+          >
+            <option value="">All Operations</option>
+            <option value="USER_LOGIN">Login</option>
+            <option value="USER_LOGOUT">Logout</option>
+            <option value="USER_REGISTER">Register</option>
+            <option value="CREATE_RESERVATION">Reservation Create</option>
+            <option value="APPROVE_RESERVATION">Reservation Approve</option>
+            <option value="REJECT_RESERVATION">Reservation Reject</option>
+            <option value="CREATE_MEETING_ROOM">Meeting Room Create</option>
+            <option value="UPDATE_MEETING_ROOM">Meeting Room Update</option>
+            <option value="DELETE_MEETING_ROOM">Meeting Room Delete</option>
+            <option value="CREATE_USER">User Create</option>
+            <option value="UPDATE_USER">User Update</option>
+            <option value="DELETE_USER">User Delete</option>
+            <option value="FILE_UPLOAD">File Upload</option>
+          </select>
+        </div>
+
+        <!-- Filter Button -->
+        <button 
+          class="btn btn-primary btn-compact"
+          @click="$emit('filterDate', dateFilters)"
         >
-          <option value="">All Operations</option>
-          <option value="USER_LOGIN">Login</option>
-          <option value="USER_LOGOUT">Logout</option>
-          <option value="USER_REGISTER">Register</option>
-          <option value="CREATE_RESERVATION">Reservation Create</option>
-          <option value="APPROVE_RESERVATION">Reservation Approve</option>
-          <option value="REJECT_RESERVATION">Reservation Reject</option>
-          <option value="CREATE_MEETING_ROOM">Meeting Room Create</option>
-          <option value="UPDATE_MEETING_ROOM">Meeting Room Update</option>
-          <option value="DELETE_MEETING_ROOM">Meeting Room Delete</option>
-          <option value="CREATE_USER">User Create</option>
-          <option value="UPDATE_USER">User Update</option>
-          <option value="DELETE_USER">User Delete</option>
-          <option value="FILE_UPLOAD">File Upload</option>
-        </select>
+          Apply Filters
+        </button>
       </div>
     </div>
 
