@@ -89,8 +89,10 @@
             >
           </div>
           <div class="modal-actions">
-            <button type="button" @click="showBookingModal = false">Cancel</button>
-            <button type="submit" :disabled="isLoading">
+            <button type="button" class="btn btn-secondary" @click="showBookingModal = false">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" :disabled="isLoading">
               {{ isLoading ? 'Booking...' : 'Confirm Booking' }}
             </button>
           </div>
@@ -219,10 +221,10 @@ onMounted(searchRooms)
 }
 
 .filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
   background: white;
   padding: 1rem;
   border-radius: 8px;
@@ -230,9 +232,7 @@ onMounted(searchRooms)
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex: 1 1 100%;
 }
 
 .form-group label {
@@ -248,8 +248,8 @@ onMounted(searchRooms)
 
 .rooms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .room-card {
@@ -296,84 +296,6 @@ onMounted(searchRooms)
   cursor: not-allowed;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-}
-
-.modal-content h2 {
-  margin: 0 0 1.5rem;
-}
-
-.modal-content textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.modal-actions button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modal-actions button[type="button"] {
-  background: #e0e0e0;
-  border: none;
-  color: #666;
-}
-
-.modal-actions button[type="button"]:hover {
-  background: #d0d0d0;
-}
-
-.modal-actions button[type="submit"] {
-  background: #42b983;
-  color: white;
-  border: none;
-}
-
-.modal-actions button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.filters input[type="datetime-local"] {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.room-photo {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px 8px 0 0;
-  margin-bottom: 1rem;
-}
-
 .search-button {
   align-self: flex-end;
   padding: 0.5rem 1rem;
@@ -415,5 +337,16 @@ onMounted(searchRooms)
 .area {
   color: #666;
   margin: 0.5rem 0;
+}
+
+@media (min-width: 768px) {
+  .form-group {
+    flex: 1;
+  }
+
+  .rooms-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
 }
 </style> 

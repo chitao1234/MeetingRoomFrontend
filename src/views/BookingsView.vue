@@ -16,10 +16,10 @@
 
     <!-- Bookings list -->
     <div class="bookings-list">
-      <div v-for="booking in filteredBookings" :key="booking.reservationId" class="booking-card">
+      <div v-for="booking in filteredBookings" :key="booking.reservationId" class="card">
         <div class="booking-header">
           <h3>{{ booking.meetingSubject }}</h3>
-          <span :class="['status', booking.status.toLowerCase()]">
+          <span :class="['status-badge', booking.status.toLowerCase()]">
             {{ booking.status }}
           </span>
         </div>
@@ -44,7 +44,7 @@
         <div class="booking-actions">
           <button 
             v-if="booking.status === 'PENDING'"
-            class="cancel-button" 
+            class="btn btn-danger"
             @click="cancelBooking(booking.reservationId)"
           >
             Cancel Booking
@@ -120,11 +120,15 @@ h1 {
 
 .filters {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;  /* Allow wrapping on mobile */
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .filter-button {
+  flex: 1 1 auto;  /* Allow buttons to grow and shrink */
+  min-width: 80px;
+  text-align: center;
   padding: 0.5rem 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -151,7 +155,7 @@ h1 {
   gap: 1.5rem;
 }
 
-.booking-card {
+.card {
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
@@ -159,6 +163,8 @@ h1 {
 }
 
 .booking-header {
+  flex-direction: column;  /* Stack elements on mobile */
+  gap: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -170,24 +176,24 @@ h1 {
   color: #2c3e50;
 }
 
-.status {
+.status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.875rem;
   font-weight: 500;
 }
 
-.status.pending {
+.status-badge.pending {
   background: #fef3c7;
   color: #92400e;
 }
 
-.status.approved {
+.status-badge.approved {
   background: #d1fae5;
   color: #065f46;
 }
 
-.status.rejected {
+.status-badge.rejected {
   background: #fee2e2;
   color: #991b1b;
 }
@@ -227,5 +233,17 @@ h1 {
 
 .cancel-button:hover {
   background: #dc2626;
+}
+
+@media (min-width: 768px) {
+  .booking-header {
+    flex-direction: row;  /* Side by side on desktop */
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .filter-button {
+    flex: 0 1 auto;  /* Don't grow on desktop */
+  }
 }
 </style> 

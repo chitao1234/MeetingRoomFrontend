@@ -2,23 +2,24 @@
   <div class="home">
     <h1>Welcome to Meeting Room Booking System</h1>
     <div class="stats-container">
-      <div class="stat-card">
+      <router-link to="/bookings" class="card stat-card">
         <h3>Your Upcoming Bookings</h3>
         <div class="stat">{{ upcomingBookings.length }}</div>
-      </div>
-      <div class="stat-card">
+      </router-link>
+      <router-link to="/rooms" class="stat-card">
         <h3>Available Rooms</h3>
         <div class="stat">{{ availableRooms.length }}</div>
-      </div>
-      <div class="stat-card">
+      </router-link>
+      <router-link to="/bookings" class="stat-card">
         <h3>Total Bookings</h3>
         <div class="stat">{{ totalBookings }}</div>
-      </div>
+      </router-link>
     </div>
     <div class="quick-actions">
       <router-link to="/rooms" class="action-button">Book a Room</router-link>
       <router-link to="/bookings" class="action-button">View My Bookings</router-link>
     </div>
+    <NotificationList :userId="currentUser.userId" />
   </div>
 </template>
 
@@ -28,10 +29,14 @@ import { searchMeetingRooms } from '@/api/meetingRoom'
 import { getUserReservations } from '@/api/reservation'
 import type { MeetingRoom } from '@/api/meetingRoom'
 import type { Reservation } from '@/api/reservation'
+import NotificationList from '@/components/NotificationList.vue'
 
 const upcomingBookings = ref<Reservation[]>([])
 const availableRooms = ref<MeetingRoom[]>([])
 const totalBookings = ref(0)
+const currentUser = ref({
+  userId: parseInt(localStorage.getItem('userId') || '0')
+})
 
 onMounted(async () => {
   try {
@@ -76,9 +81,9 @@ h1 {
 
 .stats-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .stat-card {
@@ -87,6 +92,14 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .stat-card h3 {
@@ -102,7 +115,7 @@ h1 {
 
 .quick-actions {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 1rem;
 }
 
@@ -118,5 +131,17 @@ h1 {
 
 .action-button:hover {
   background-color: #3aa876;
+}
+
+@media (min-width: 768px) {
+  .stats-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .quick-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
 }
 </style> 

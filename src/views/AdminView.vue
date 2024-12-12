@@ -24,8 +24,8 @@
               <td>{{ user.email }}</td>
               <td>{{ user.role }}</td>
               <td>
-                <button @click="editUser(user)">Edit</button>
-                <button @click="deleteUser(user.userId)" class="danger">Delete</button>
+                <button @click="editUser(user)" class="btn btn-primary">Edit</button>
+                <button @click="deleteUser(user.userId)" class="btn btn-danger">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -60,8 +60,8 @@
               </select>
             </div>
             <div class="modal-actions">
-              <button type="submit">Create</button>
-              <button type="button" class="danger" @click="showCreateUserModal = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Create</button>
+              <button type="button" class="btn btn-secondary" @click="showCreateUserModal = false">Cancel</button>
             </div>
           </form>
         </div>
@@ -91,8 +91,8 @@
               </select>
             </div>
             <div class="modal-actions">
-              <button type="submit">Save</button>
-              <button type="button" class="danger" @click="showEditUserModal = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-secondary" @click="showEditUserModal = false">Cancel</button>
             </div>
           </form>
         </div>
@@ -647,5 +647,40 @@ td button {
   border-radius: 4px;
   resize: vertical;
   min-height: 80px;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin: 1rem -1rem;
+  padding: 0 1rem;
+}
+
+.admin-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-nav button {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
+.modal-content {
+  width: 95%;
+  margin: 1rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .table-container {
+    margin: 1rem 0;
+  }
+
+  .modal-content {
+    width: 90%;
+    max-width: 500px;
+  }
 }
 </style> 

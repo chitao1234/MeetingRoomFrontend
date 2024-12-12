@@ -20,7 +20,7 @@
           required
         />
       </div>
-      <button type="submit" :disabled="isLoading">
+      <button type="submit" class="btn btn-primary" :disabled="isLoading">
         {{ isLoading ? 'Logging in...' : 'Login' }}
       </button>
       <p v-if="error" class="error">{{ error }}</p>
