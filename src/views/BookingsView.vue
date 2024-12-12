@@ -3,11 +3,11 @@
     <h1 class="mb-4">My Bookings</h1>
     
     <!-- Booking filters -->
-    <div class="flex flex-wrap gap-2 mb-4">
+    <div class="status-filters mb-4">
       <button 
         v-for="status in ['ALL', 'PENDING', 'APPROVED', 'REJECTED']" 
         :key="status"
-        :class="['btn', selectedStatus === status ? 'btn-primary' : 'btn-secondary']"
+        :class="['status-btn', selectedStatus === status ? 'active' : '']"
         @click="selectedStatus = status"
       >
         {{ status }}

@@ -267,6 +267,49 @@ tbody tr:hover {
   background-color: var(--background-light);
 }
 
+/* Status Filters */
+.status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.status-btn {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: white;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-btn:hover {
+  background: var(--background-light);
+}
+
+.status-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 480px) {
+  .status-filters {
+    gap: 0.4rem;
+  }
+  
+  .status-btn {
+    flex: 1 1 calc(50% - 0.2rem);
+    padding: 0.4rem;
+    min-width: 0;
+  }
+}
+
 /* ==========================================================================
    Utility Classes
    ========================================================================== */
@@ -347,10 +390,3 @@ tbody tr:hover {
     grid-template-columns: repeat(4, 1fr);
   }
 } 
-
-/* Admin Dashboard */
-.admin-nav {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}

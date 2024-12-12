@@ -8,14 +8,32 @@
         <router-link class="nav-link" to="/bookings">My Bookings</router-link>
         <template v-if="isAdmin">| <router-link class="nav-link" to="/admin">Admin</router-link></template>
       </div>
-      <button @click="logout" class="btn btn-danger">Logout</button>
+      <div class="nav-right">
+        <router-link to="/profile" class="avatar-link">
+          <img 
+            :src="userInfo.avatarUrl || xidian" 
+            :alt="userInfo.username"
+            class="avatar-img"
+          />
+        </router-link>
+        <button @click="logout" class="btn btn-danger">Logout</button>
+      </div>
     </nav>
 
     <!-- Mobile nav -->
     <nav v-if="isAuthenticated" class="mobile-nav">
-      <button class="btn btn-primary menu-btn" @click="showMobileMenu = !showMobileMenu">
-        ☰
-      </button>
+      <div class="mobile-header">
+        <button class="btn btn-primary menu-btn" @click="showMobileMenu = !showMobileMenu">
+          ☰
+        </button>
+        <router-link to="/profile" class="avatar-link">
+          <img 
+            :src="userInfo.avatarUrl || xidian" 
+            :alt="userInfo.username"
+            class="avatar-img"
+          />
+        </router-link>
+      </div>
       <div class="mobile-menu" :class="{ active: showMobileMenu }">
         <router-link class="nav-link" to="/" @click="showMobileMenu = false">Home</router-link>
         <router-link class="nav-link" to="/rooms" @click="showMobileMenu = false">Meeting Rooms</router-link>
@@ -33,17 +51,32 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { checkAuth, checkIsAdmin, logout as authLogout } from '@/api/auth'
+import { getUser } from '@/api/user'
+import type { User } from '@/api/user'
+import xidian from '@/assets/xidian.png'
 
 const router = useRouter()
 const route = useRoute()
 const isAuthenticated = ref(false)
 const isAdmin = ref(false)
 const showMobileMenu = ref(false)
+const userInfo = ref<Partial<User>>({
+  username: '',
+  avatarUrl: ''
+})
 
 const checkAuthStatus = async () => {
   isAuthenticated.value = await checkAuth()
   if (isAuthenticated.value) {
     isAdmin.value = await checkIsAdmin()
+    // Fetch user info
+    try {
+      const userId = parseInt(localStorage.getItem('userId') || '0')
+      const userData = await getUser(userId)
+      userInfo.value = userData
+    } catch (error) {
+      console.error('Failed to fetch user info:', error)
+    }
   }
 }
 
@@ -132,5 +165,44 @@ const logout = async () => {
   .desktop-nav {
     display: flex;
   }
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-link {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.avatar-link:hover {
+  transform: scale(1.1);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Mobile specific styles */
+.mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Update mobile menu styles */
+.mobile-menu {
+  top: calc(100% + 0.5rem);
 }
 </style>

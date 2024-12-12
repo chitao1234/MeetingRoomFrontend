@@ -1,12 +1,12 @@
 <template>
   <div class="container p-4">
     <!-- Navigation -->
-    <nav class="flex gap-3 mb-4">
+    <nav class="status-filters mb-4">
       <button 
         v-for="section in sections"
         :key="section.value"
         @click="activeSection = section.value"
-        :class="['btn', activeSection === section.value ? 'btn-primary' : 'btn-secondary']"
+        :class="['status-btn', activeSection === section.value ? 'active' : '']"
       >
         {{ section.label }}
       </button>
