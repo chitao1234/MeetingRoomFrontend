@@ -26,15 +26,28 @@
         
         <div class="booking-details">
           <div class="time-details">
-            <p>
-              <strong>Date:</strong> 
-              {{ new Date(booking.startTime).toLocaleDateString() }}
-            </p>
-            <p>
-              <strong>Time:</strong>
-              {{ formatTime(booking.startTime) }} - {{ formatTime(booking.endTime) }}
-            </p>
+            <template v-if="isDifferentDay(booking.startTime, booking.endTime)">
+              <p>
+                <strong>Start:</strong> 
+                {{ formatDateTime(booking.startTime, true) }}
+              </p>
+              <p>
+                <strong>End:</strong>
+                {{ formatDateTime(booking.endTime, true) }}
+              </p>
+            </template>
+            <template v-else>
+              <p>
+                <strong>Date:</strong> 
+                {{ new Date(booking.startTime).toLocaleDateString() }}
+              </p>
+              <p>
+                <strong>Time:</strong>
+                {{ formatDateTime(booking.startTime) }} - {{ formatDateTime(booking.endTime) }}
+              </p>
+            </template>
           </div>
+          <p><strong>Room:</strong> {{ booking.roomNumber }}</p>
           <p><strong>Attendees:</strong> {{ booking.participantCount }}</p>
           <p v-if="booking.rejectionReason" class="rejection-reason">
             <strong>Rejection Reason:</strong> {{ booking.rejectionReason }}
@@ -58,9 +71,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { getUserReservations, deleteReservation } from '@/api/reservation'
+import { getMeetingRoom } from '@/api/meetingRoom'
 import type { Reservation } from '@/api/reservation'
 
-const bookings = ref<Reservation[]>([])
+// Add interface for room info
+interface BookingWithRoom extends Reservation {
+  roomNumber?: string;
+}
+
+const bookings = ref<BookingWithRoom[]>([])
 const selectedStatus = ref('ALL')
 
 // Filter bookings based on selected status
@@ -71,19 +90,52 @@ const filteredBookings = computed(() => {
   return bookings.value.filter(booking => booking.status === selectedStatus.value)
 })
 
-// Format time from ISO string to readable format
-function formatTime(isoString: string): string {
-  return new Date(isoString).toLocaleTimeString([], {
+// Add this function to check if dates are different
+function isDifferentDay(date1: string, date2: string): boolean {
+  const d1 = new Date(date1)
+  const d2 = new Date(date2)
+  return d1.toDateString() !== d2.toDateString()
+}
+
+// Update the formatTime function
+function formatDateTime(isoString: string, includeDate: boolean = false): string {
+  const date = new Date(isoString)
+  const timeStr = date.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
   })
+  if (includeDate) {
+    return `${date.toLocaleDateString()} ${timeStr}`
+  }
+  return timeStr
 }
 
 // Load user's bookings
 async function loadBookings() {
   try {
     const userId = parseInt(localStorage.getItem('userId') || '0')
-    bookings.value = await getUserReservations(userId)
+    const reservations = await getUserReservations(userId)
+    
+    // Fetch room details for each booking
+    const bookingsWithRooms = await Promise.all(
+      reservations.map(async (booking) => {
+        try {
+          const room = await getMeetingRoom(booking.meetingRoomId)
+          return {
+            ...booking,
+            roomNumber: room.roomNumber
+          }
+        } catch (error) {
+          console.error(`Failed to load room details for booking ${booking.reservationId}:`, error)
+          return {
+            ...booking,
+            roomNumber: 'Unknown'
+          }
+        }
+      })
+    )
+
+    bookings.value = bookingsWithRooms
     // Sort by start time, most recent first
     bookings.value.sort((a, b) => 
       new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
