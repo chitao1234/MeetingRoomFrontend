@@ -18,14 +18,13 @@
     <div class="bookings-list">
       <div v-for="booking in filteredBookings" :key="booking.reservationId" class="booking-card">
         <div class="booking-header">
-          <h3>{{ booking.title }}</h3>
+          <h3>{{ booking.meetingSubject }}</h3>
           <span :class="['status', booking.status.toLowerCase()]">
             {{ booking.status }}
           </span>
         </div>
         
         <div class="booking-details">
-          <p class="description">{{ booking.description }}</p>
           <div class="time-details">
             <p>
               <strong>Date:</strong> 
@@ -188,11 +187,6 @@ h1 {
 
 .booking-details {
   margin-bottom: 1.5rem;
-}
-
-.description {
-  color: #4b5563;
-  margin-bottom: 1rem;
 }
 
 .time-details {
