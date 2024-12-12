@@ -1,319 +1,211 @@
 <template>
   <div class="container p-4">
     <!-- Navigation -->
-    <div class="flex gap-3 mb-4">
+    <nav class="flex gap-3 mb-4">
       <button 
-        @click="activeSection = 'users'"
-        :class="['btn', activeSection === 'users' ? 'btn-primary' : 'btn-secondary']"
+        v-for="section in sections"
+        :key="section.value"
+        @click="activeSection = section.value"
+        :class="['btn', activeSection === section.value ? 'btn-primary' : 'btn-secondary']"
       >
-        Users
+        {{ section.label }}
       </button>
-      <button 
-        @click="activeSection = 'rooms'"
-        :class="['btn', activeSection === 'rooms' ? 'btn-primary' : 'btn-secondary']"
-      >
-        Rooms
-      </button>
-      <button 
-        @click="activeSection = 'reservations'"
-        :class="['btn', activeSection === 'reservations' ? 'btn-primary' : 'btn-secondary']"
-      >
-        Reservations
-      </button>
-    </div>
+    </nav>
 
     <h1 class="mb-4">Admin Dashboard</h1>
     
-    <!-- User Management Section -->
-    <div class="mb-5" v-if="activeSection === 'users'">
-      <div class="flex justify-between items-center mb-4">
-        <h2>User Management</h2>
-        <button class="btn btn-primary" @click="showCreateUserModal = true">Create User</button>
-      </div>
-      
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in users" :key="user.userId">
-              <td>{{ user.userId }}</td>
-              <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.role }}</td>
-              <td>
-                <div class="flex gap-2">
-                  <button @click="editUser(user)" class="btn btn-primary">Edit</button>
-                  <button @click="deleteUser(user.userId)" class="btn btn-danger">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Section Components -->
+    <UserManagement
+      v-if="activeSection === 'users'"
+      :users="users"
+      @showCreateModal="showCreateUserModal = true"
+      @edit="handleEditUser"
+      @delete="deleteUser"
+    />
 
-      <!-- Create User Modal -->
-      <div v-if="showCreateUserModal" class="modal">
-        <div class="modal-content">
-          <h3 class="mb-4">Create User</h3>
-          <form @submit.prevent="createNewUser">
-            <div class="form-group">
-              <label for="username">Username:</label>
-              <input id="username" v-model="newUser.username" required />
-            </div>
-            <div class="form-group">
-              <label for="password">Password:</label>
-              <input id="password" v-model="newUser.password" type="password" required />
-            </div>
-            <div class="form-group">
-              <label for="email">Email:</label>
-              <input id="email" v-model="newUser.email" type="email" required />
-            </div>
-            <div class="form-group">
-              <label for="phone">Phone:</label>
-              <input id="phone" v-model="newUser.phone" />
-            </div>
-            <div class="form-group">
-              <label for="role">Role:</label>
-              <select id="role" v-model="newUser.role">
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-              </select>
-            </div>
-            <div class="modal-actions">
-              <button type="submit" class="btn btn-primary">Create</button>
-              <button type="button" class="btn btn-secondary" @click="showCreateUserModal = false">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
+    <RoomManagement
+      v-if="activeSection === 'rooms'"
+      :rooms="rooms"
+      @showCreateModal="showCreateRoomModal = true"
+      @edit="handleEditRoom"
+      @delete="deleteRoom"
+    />
 
-      <!-- Edit User Modal -->
-      <div v-if="showEditUserModal" class="modal">
-        <div class="modal-content">
-          <h3 class="mb-4">Edit User</h3>
-          <form @submit.prevent="saveUserEdit">
-            <div class="form-group">
-              <label for="edit-username">Username:</label>
-              <input id="edit-username" v-model="editingUser.username" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-email">Email:</label>
-              <input id="edit-email" v-model="editingUser.email" type="email" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-phone">Phone:</label>
-              <input id="edit-phone" v-model="editingUser.phone" />
-            </div>
-            <div class="form-group">
-              <label for="edit-role">Role:</label>
-              <select id="edit-role" v-model="editingUser.role">
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-              </select>
-            </div>
-            <div class="modal-actions">
-              <button type="submit" class="btn btn-primary">Save</button>
-              <button type="button" class="btn btn-secondary" @click="showEditUserModal = false">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <ReservationManagement
+      v-if="activeSection === 'reservations'"
+      :reservations="reservations"
+      :getUserName="getUserName"
+      @approve="approveReservation"
+      @reject="openRejectModal"
+    />
 
-    <!-- Room Management Section -->
-    <div class="mb-5" v-if="activeSection === 'rooms'">
-      <div class="flex justify-between items-center mb-4">
-        <h2>Room Management</h2>
-        <button class="btn btn-primary" @click="showCreateRoomModal = true">Create Room</button>
-      </div>
-      
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Capacity</th>
-              <th>Area (m²)</th>
-              <th>Room Number</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="room in rooms" :key="room.meetingRoomId">
-              <td>{{ room.meetingRoomId }}</td>
-              <td>{{ room.name }}</td>
-              <td>{{ room.capacity }}</td>
-              <td>{{ room.area || '-' }}</td>
-              <td>{{ room.roomNumber }}</td>
-              <td>
-                <div class="flex gap-2">
-                  <button @click="editRoom(room)" class="btn btn-primary">Edit</button>
-                  <button @click="deleteRoom(room.meetingRoomId)" class="btn btn-danger">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <LogManagement
+      v-if="activeSection === 'logs'"
+      :logs="logs"
+      :getUserName="getUserName"
+      @cleanup="openCleanupModal"
+      @filterDate="filterLogsByDate"
+      @filterType="filterLogsByType"
+    />
 
-      <!-- Create Room Modal -->
-      <div v-if="showCreateRoomModal" class="modal">
-        <div class="modal-content">
-          <h3 class="mb-4">Create Room</h3>
-          <form @submit.prevent="createNewRoom">
-            <div class="form-group">
-              <label for="room-name">Name:</label>
-              <input id="room-name" v-model="newRoom.name" required />
-            </div>
-            <div class="form-group">
-              <label for="room-capacity">Capacity:</label>
-              <input id="room-capacity" v-model="newRoom.capacity" type="number" required />
-            </div>
-            <div class="form-group">
-              <label for="room-area">Area (m²):</label>
-              <input id="room-area" v-model="newRoom.area" type="number" min="0" step="0.1" />
-            </div>
-            <div class="form-group">
-              <label for="room-number">Room Number:</label>
-              <input id="room-number" v-model="newRoom.roomNumber" required />
-            </div>
-            <div class="form-group">
-              <label for="room-photo">Photo URL:</label>
-              <input id="room-photo" v-model="newRoom.photoUrl" type="url" />
-            </div>
-            <div class="form-group">
-              <label for="room-description">Description:</label>
-              <textarea id="room-description" v-model="newRoom.description"></textarea>
-            </div>
-            <div class="modal-actions">
-              <button type="submit" class="btn btn-primary">Create</button>
-              <button type="button" class="btn btn-secondary" @click="showCreateRoomModal = false">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
+    <!-- Modals -->
+    <BaseModal
+      :show="showCreateUserModal"
+      title="Create User"
+      @close="showCreateUserModal = false"
+    >
+      <UserForm
+        :user="newUser"
+        @submit="handleCreateUser"
+        @cancel="showCreateUserModal = false"
+      />
+    </BaseModal>
 
-      <!-- Edit Room Modal -->
-      <div v-if="showEditRoomModal" class="modal">
-        <div class="modal-content">
-          <h3 class="mb-4">Edit Room</h3>
-          <form @submit.prevent="saveRoomEdit">
-            <div class="form-group">
-              <label for="edit-room-name">Name:</label>
-              <input id="edit-room-name" v-model="editingRoom.name" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-room-capacity">Capacity:</label>
-              <input id="edit-room-capacity" v-model="editingRoom.capacity" type="number" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-room-area">Area (m²):</label>
-              <input id="edit-room-area" v-model="editingRoom.area" type="number" min="0" step="0.1" />
-            </div>
-            <div class="form-group">
-              <label for="edit-room-number">Room Number:</label>
-              <input id="edit-room-number" v-model="editingRoom.roomNumber" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-room-photo">Photo URL:</label>
-              <input id="edit-room-photo" v-model="editingRoom.photoUrl" type="url" />
-            </div>
-            <div class="form-group">
-              <label for="edit-room-description">Description:</label>
-              <textarea id="edit-room-description" v-model="editingRoom.description"></textarea>
-            </div>
-            <div class="modal-actions">
-              <button type="submit" class="btn btn-primary">Save</button>
-              <button type="button" class="btn btn-secondary" @click="showEditRoomModal = false">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <BaseModal
+      :show="showEditUserModal"
+      title="Edit User"
+      @close="showEditUserModal = false"
+    >
+      <UserForm
+        :user="editingUser"
+        :isEdit="true"
+        @submit="handleSaveUserEdit"
+        @cancel="showEditUserModal = false"
+      />
+    </BaseModal>
 
-    <!-- Reservation Management Section -->
-    <div class="mb-5" v-if="activeSection === 'reservations'">
-      <h2 class="mb-4">Reservations</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Room</th>
-              <th>User</th>
-              <th>Subject</th>
-              <th>Start Time</th>
-              <th>End Time</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="reservation in reservations" :key="reservation.reservationId">
-              <td>{{ reservation.reservationId }}</td>
-              <td>{{ reservation.meetingRoomId }}</td>
-              <td>{{ getUserName(reservation.userId) }}</td>
-              <td>{{ reservation.meetingSubject }}</td>
-              <td>{{ formatDateTime(reservation.startTime) }}</td>
-              <td>{{ formatDateTime(reservation.endTime) }}</td>
-              <td>
-                <span :class="['status-badge', reservation.status.toLowerCase()]">
-                  {{ reservation.status }}
-                </span>
-              </td>
-              <td>
-                <div class="flex gap-2" v-if="reservation.status === 'PENDING'">
-                  <button 
-                    class="btn btn-primary"
-                    @click="approveReservation(reservation.reservationId)"
-                  >
-                    Approve
-                  </button>
-                  <button 
-                    class="btn btn-danger"
-                    @click="openRejectModal(reservation.reservationId)"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- Room Modals -->
+    <BaseModal
+      :show="showCreateRoomModal"
+      title="Create Room"
+      @close="showCreateRoomModal = false"
+    >
+      <RoomForm
+        :room="newRoom"
+        @submit="handleCreateRoom"
+        @cancel="showCreateRoomModal = false"
+      />
+    </BaseModal>
+
+    <BaseModal
+      :show="showEditRoomModal"
+      title="Edit Room"
+      @close="showEditRoomModal = false"
+    >
+      <RoomForm
+        :room="editingRoom"
+        :isEdit="true"
+        @submit="handleSaveRoomEdit"
+        @cancel="showEditRoomModal = false"
+      />
+    </BaseModal>
+
+    <!-- Reject Reservation Modal -->
+    <BaseModal
+      :show="showRejectModal"
+      title="Reject Reservation"
+      @close="showRejectModal = false"
+    >
+      <div class="form-group">
+        <label for="reject-reason">Rejection Reason:</label>
+        <textarea
+          id="reject-reason"
+          v-model="rejectReason"
+          required
+          class="form-textarea"
+          rows="3"
+        ></textarea>
       </div>
-    </div>
+      <div class="modal-actions">
+        <button @click="handleRejectReservation" class="btn btn-danger">Confirm Reject</button>
+        <button @click="showRejectModal = false" class="btn btn-secondary">Cancel</button>
+      </div>
+    </BaseModal>
+
+    <!-- Cleanup Logs Modal -->
+    <BaseModal
+      :show="showCleanupModal"
+      title="Cleanup Old Logs"
+      @close="showCleanupModal = false"
+    >
+      <div class="form-group">
+        <label for="days-to-keep">Days to Keep:</label>
+        <input 
+          id="days-to-keep" 
+          v-model="daysToKeep" 
+          type="number" 
+          min="1" 
+          class="form-input"
+        />
+      </div>
+      <div class="modal-actions">
+        <button @click="handleCleanupLogs" class="btn btn-danger">Confirm Cleanup</button>
+        <button @click="showCleanupModal = false" class="btn btn-secondary">Cancel</button>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import * as adminApi from '@/api/admin'
+import UserManagement from '@/components/admin/UserManagement.vue'
+import RoomManagement from '@/components/admin/RoomManagement.vue'
+import ReservationManagement from '@/components/admin/ReservationManagement.vue'
+import LogManagement from '@/components/admin/LogManagement.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
+import UserForm from '@/components/admin/UserForm.vue'
+import RoomForm from '@/components/admin/RoomForm.vue'
+import { useUsers } from '@/composables/useUsers'
+import { useRooms } from '@/composables/useRooms'
+import { useReservations } from '@/composables/useReservations'
+import { useLogs } from '@/composables/useLogs'
 import { formatDateTime } from '@/utils/dateTime'
-import type { User } from '@/api/user'
-import type { MeetingRoom } from '@/api/meetingRoom'
-import type { Reservation } from '@/api/reservation'
 
 export default defineComponent({
   name: 'AdminView',
+  components: {
+    UserManagement,
+    RoomManagement,
+    ReservationManagement,
+    LogManagement,
+    BaseModal,
+    UserForm,
+    RoomForm
+  },
   setup() {
+    const sections = [
+      { value: 'users', label: 'Users' },
+      { value: 'rooms', label: 'Rooms' },
+      { value: 'reservations', label: 'Reservations' },
+      { value: 'logs', label: 'Logs' }
+    ]
+
     const activeSection = ref('users')
-    const users = ref<User[]>([])
-    const rooms = ref<MeetingRoom[]>([])
-    const reservations = ref<Reservation[]>([])
+    const { users, loadUsers, createUser, updateUser, deleteUser } = useUsers()
+    const { rooms, loadRooms, createRoom, updateRoom, deleteRoom } = useRooms()
+    const { 
+      reservations, 
+      loadReservations, 
+      approveReservation, 
+      rejectReservation 
+    } = useReservations()
+    const {
+      logs,
+      loadLogs,
+      filterByDateRange,
+      filterByType,
+      cleanupOldLogs
+    } = useLogs()
+
+    // Modal states
     const showCreateUserModal = ref(false)
-    const showCreateRoomModal = ref(false)
     const showEditUserModal = ref(false)
+    const showCreateRoomModal = ref(false)
     const showEditRoomModal = ref(false)
     const showRejectModal = ref(false)
+    const showCleanupModal = ref(false)
+
+    // Form data
     const newUser = ref({
       username: '',
       password: '',
@@ -321,146 +213,93 @@ export default defineComponent({
       phone: '',
       role: 'USER'
     })
+    const editingUser = ref({})
     const newRoom = ref({
       name: '',
       capacity: 0,
-      area: undefined as number | undefined,
+      area: undefined,
       roomNumber: '',
       photoUrl: '',
       description: ''
     })
-    const editingUser = ref<Partial<User>>({})
-    const editingRoom = ref<Partial<MeetingRoom>>({})
+    const editingRoom = ref({})
     const rejectReason = ref('')
     const rejectingReservationId = ref<number | null>(null)
+    const daysToKeep = ref(30)
 
-    const loadUsers = async () => {
-      try {
-        users.value = await adminApi.getAllUsers()
-      } catch (error) {
-        console.error('Failed to load users:', error)
+    // User actions
+    const handleCreateUser = async (userData: any) => {
+      if (await createUser(userData)) {
+        showCreateUserModal.value = false
       }
     }
 
-    const loadRooms = async () => {
-      try {
-        rooms.value = await adminApi.getAllRooms()
-      } catch (error) {
-        console.error('Failed to load rooms:', error)
-      }
-    }
-
-    const loadReservations = async () => {
-      try {
-        reservations.value = await adminApi.getAllReservations()
-      } catch (error) {
-        console.error('Failed to load reservations:', error)
-      }
-    }
-
-    const deleteUser = async (userId: number) => {
-      if (confirm('Are you sure you want to delete this user?')) {
-        try {
-          await adminApi.deleteUser(userId)
-          await loadUsers()
-        } catch (error) {
-          console.error('Failed to delete user:', error)
-        }
-      }
-    }
-
-    const deleteRoom = async (roomId: number) => {
-      if (confirm('Are you sure you want to delete this room?')) {
-        try {
-          await adminApi.deleteRoom(roomId)
-          await loadRooms()
-        } catch (error) {
-          console.error('Failed to delete room:', error)
-        }
-      }
-    }
-
-    const editRoom = (room: MeetingRoom) => {
-      editingRoom.value = { ...room }
-      showEditRoomModal.value = true
-    }
-
-    const editUser = (user: User) => {
+    const handleEditUser = (user: any) => {
       editingUser.value = { ...user }
       showEditUserModal.value = true
     }
 
-    const approveReservation = async (reservationId: number) => {
-      try {
-        await adminApi.approveReservation(reservationId)
-        await loadReservations()
-      } catch (error) {
-        console.error('Failed to approve reservation:', error)
+    const handleSaveUserEdit = async (userData: any) => {
+      if (await updateUser(userData.userId, userData)) {
+        showEditUserModal.value = false
       }
     }
 
+    // Room actions
+    const handleCreateRoom = async (roomData: any) => {
+      if (await createRoom(roomData)) {
+        showCreateRoomModal.value = false
+      }
+    }
+
+    const handleEditRoom = (room: any) => {
+      editingRoom.value = { ...room }
+      showEditRoomModal.value = true
+    }
+
+    const handleSaveRoomEdit = async (roomData: any) => {
+      if (await updateRoom(roomData.meetingRoomId, roomData)) {
+        showEditRoomModal.value = false
+      }
+    }
+
+    // Reservation actions
     const openRejectModal = (reservationId: number) => {
       rejectingReservationId.value = reservationId
       rejectReason.value = ''
       showRejectModal.value = true
     }
 
-    const submitRejectReservation = async () => {
+    const handleRejectReservation = async () => {
       if (rejectingReservationId.value && rejectReason.value) {
-        try {
-          await adminApi.rejectReservation(rejectingReservationId.value, rejectReason.value)
-          await loadReservations()
+        if (await rejectReservation(rejectingReservationId.value, rejectReason.value)) {
           showRejectModal.value = false
           rejectingReservationId.value = null
           rejectReason.value = ''
-        } catch (error) {
-          console.error('Failed to reject reservation:', error)
         }
       }
     }
 
-    const createNewUser = async () => {
-      try {
-        await adminApi.createUser(newUser.value)
-        showCreateUserModal.value = false
-        await loadUsers()
-        newUser.value = { username: '', password: '', email: '', phone: '', role: 'USER' }
-      } catch (error) {
-        console.error('Failed to create user:', error)
+    // Log actions
+    const openCleanupModal = () => {
+      showCleanupModal.value = true
+    }
+
+    const filterLogsByDate = async (filters: any) => {
+      await filterByDateRange(filters.startDate, filters.endDate)
+    }
+
+    const filterLogsByType = async (operationType: string) => {
+      await filterByType(operationType)
+    }
+
+    const handleCleanupLogs = async () => {
+      if (await cleanupOldLogs(daysToKeep.value)) {
+        showCleanupModal.value = false
       }
     }
 
-    const createNewRoom = async () => {
-      try {
-        await adminApi.createRoom(newRoom.value)
-        showCreateRoomModal.value = false
-        await loadRooms()
-        newRoom.value = { name: '', capacity: 0, area: undefined, roomNumber: '', photoUrl: '', description: '' }
-      } catch (error) {
-        console.error('Failed to create room:', error)
-      }
-    }
-
-    const saveUserEdit = async () => {
-      try {
-        await adminApi.updateUser(editingUser.value.userId!, editingUser.value)
-        showEditUserModal.value = false
-        await loadUsers()
-      } catch (error) {
-        console.error('Failed to update user:', error)
-      }
-    }
-
-    const saveRoomEdit = async () => {
-      try {
-        await adminApi.updateRoom(editingRoom.value.meetingRoomId!, editingRoom.value)
-        showEditRoomModal.value = false
-        await loadRooms()
-      } catch (error) {
-        console.error('Failed to update room:', error)
-      }
-    }
-
+    // Utility functions
     const getUserName = (userId: number): string => {
       const user = users.value.find(u => u.userId === userId)
       return user ? user.username : `User ${userId}`
@@ -470,61 +309,46 @@ export default defineComponent({
       loadUsers()
       loadRooms()
       loadReservations()
+      loadLogs()
     })
 
     return {
+      sections,
       activeSection,
       users,
       rooms,
       reservations,
+      logs,
+      showCreateUserModal,
+      showEditUserModal,
+      showCreateRoomModal,
+      showEditRoomModal,
+      showRejectModal,
+      showCleanupModal,
+      newUser,
+      editingUser,
+      newRoom,
+      editingRoom,
+      rejectReason,
+      daysToKeep,
+      handleCreateUser,
+      handleEditUser,
+      handleSaveUserEdit,
+      handleCreateRoom,
+      handleEditRoom,
+      handleSaveRoomEdit,
+      handleRejectReservation,
+      handleCleanupLogs,
+      getUserName,
+      formatDateTime,
+      approveReservation,
       deleteUser,
       deleteRoom,
-      editRoom,
-      editUser,
-      approveReservation,
       openRejectModal,
-      formatDateTime,
-      showCreateUserModal,
-      showCreateRoomModal,
-      newUser,
-      newRoom,
-      createNewUser,
-      createNewRoom,
-      showEditUserModal,
-      showEditRoomModal,
-      editingUser,
-      editingRoom,
-      saveUserEdit,
-      saveRoomEdit,
-      getUserName,
-      showRejectModal,
-      rejectReason,
-      submitRejectReservation,
+      openCleanupModal,
+      filterLogsByDate,
+      filterLogsByType,
     }
   }
 })
-</script>
-
-<style scoped>
-.admin-page {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.admin-nav {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.create-btn {
-  margin-bottom: 20px;
-}
-
-@media (min-width: 768px) {
-  .admin-nav button {
-    flex: 0 1 auto;
-  }
-}
-</style> 
+</script> 

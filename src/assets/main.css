@@ -347,3 +347,10 @@ tbody tr:hover {
     grid-template-columns: repeat(4, 1fr);
   }
 } 
+
+/* Admin Dashboard */
+.admin-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
