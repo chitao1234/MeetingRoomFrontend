@@ -35,7 +35,7 @@
         >
       </div>
       <button 
-        class="search-button" 
+        class="form-group search-button" 
         @click="searchRooms"
         :disabled="!isQueryValid"
       >
@@ -57,7 +57,16 @@
         <p class="room-number">Room: {{ room.roomNumber }}</p>
         <p class="capacity">Capacity: {{ room.capacity }} people</p>
         <p class="area" v-if="room.area">Size: {{ room.area }} m²</p>
-        <p class="description">{{ room.description }}</p>
+        
+        <div class="description-container">
+          <button class="toggle-description" @click="toggleDescription(room.meetingRoomId)">
+            {{ expandedDescriptions[room.meetingRoomId] ? 'Hide Details' : 'Show Details' }}
+          </button>
+          <p class="description" v-show="expandedDescriptions[room.meetingRoomId]">
+            {{ room.description }}
+          </p>
+        </div>
+
         <button 
           class="book-button" 
           @click="openBookingModal(room)"
@@ -114,6 +123,7 @@ const selectedRoom = ref<MeetingRoom | null>(null)
 const showBookingModal = ref(false)
 const isLoading = ref(false)
 const hasSearched = ref(false)
+const expandedDescriptions = ref<{ [key: number]: boolean }>({})
 
 const currentDateTime = computed(() => {
   const now = new Date()
@@ -212,6 +222,10 @@ async function handleBooking() {
   }
 }
 
+function toggleDescription(roomId: number) {
+  expandedDescriptions.value[roomId] = !expandedDescriptions.value[roomId]
+}
+
 onMounted(searchRooms)
 </script>
 
@@ -229,20 +243,24 @@ onMounted(searchRooms)
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  align-items: flex-end;
 }
 
 .form-group {
   flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-group label {
   font-weight: 500;
-  color: #2c3e50;
+  color: var(--text-color);
 }
 
 .form-group input {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
 }
 
@@ -256,33 +274,28 @@ onMounted(searchRooms)
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .room-card h3 {
   margin: 0 0 1rem;
-  color: #2c3e50;
+  color: var(--text-color);
 }
 
 .room-number {
-  color: #666;
+  color: var(--text-light);
   font-style: italic;
 }
 
 .capacity {
   font-weight: 500;
-  color: #42b983;
-}
-
-.description {
-  margin: 1rem 0;
-  color: #2c3e50;
+  color: var(--primary-color);
 }
 
 .book-button {
   width: 100%;
   padding: 0.75rem;
-  background: #42b983;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -292,19 +305,17 @@ onMounted(searchRooms)
 
 .book-button:disabled {
   background: #e0e0e0;
-  color: #666;
+  color: var(--text-light);
   cursor: not-allowed;
 }
 
 .search-button {
-  align-self: flex-end;
   padding: 0.5rem 1rem;
-  background: #42b983;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  height: 38px;
   transition: background-color 0.2s;
 }
 
@@ -314,29 +325,65 @@ onMounted(searchRooms)
 }
 
 .search-button:hover:not(:disabled) {
-  background: #3aa876;
+  background: var(--primary-hover);
 }
 
 .search-message {
   text-align: center;
-  color: #dc2626;
+  color: var(--danger-color);
   margin: 1rem 0;
   font-size: 0.9rem;
 }
 
 .info-message {
   text-align: center;
-  color: #666;
+  color: var(--text-light);
   margin: 1rem 0;
   font-size: 0.9rem;
-  background: #f8f9fa;
+  background: var(--background-light);
   padding: 0.5rem;
   border-radius: 4px;
 }
 
 .area {
-  color: #666;
+  color: var(--text-light);
   margin: 0.5rem 0;
+}
+
+.description-container {
+  margin: 1rem 0;
+}
+
+.toggle-description {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.toggle-description:hover {
+  color: var(---text-light);
+}
+
+.description {
+  margin: 0.5rem 0;
+  color: var(--text-color);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (min-width: 768px) {

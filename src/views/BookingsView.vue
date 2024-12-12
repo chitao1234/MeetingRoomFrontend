@@ -172,34 +172,9 @@ h1 {
 
 .filters {
   display: flex;
-  flex-wrap: wrap;  /* Allow wrapping on mobile */
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-}
-
-.filter-button {
-  flex: 1 1 auto;  /* Allow buttons to grow and shrink */
-  min-width: 80px;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: #2c3e50;
-}
-
-.filter-button:hover {
-  background: #42b983;
-  color: white;
-  border-color: #42b983;
-}
-
-.filter-button.active {
-  background: #42b983;
-  color: white;
-  border-color: #42b983;
 }
 
 .bookings-list {
@@ -207,47 +182,13 @@ h1 {
   gap: 1.5rem;
 }
 
-.card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
 .booking-header {
-  flex-direction: column;  /* Stack elements on mobile */
+  flex-direction: column;
   gap: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-}
-
-.booking-header h3 {
-  margin: 0;
-  color: #2c3e50;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.status-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-badge.approved {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status-badge.rejected {
-  background: #fee2e2;
-  color: #991b1b;
 }
 
 .booking-details {
@@ -260,42 +201,9 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.rejection-reason {
-  color: #991b1b;
-  background: #fee2e2;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-top: 1rem;
-}
-
-.booking-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.cancel-button {
-  padding: 0.5rem 1rem;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.cancel-button:hover {
-  background: #dc2626;
-}
-
 @media (min-width: 768px) {
   .booking-header {
-    flex-direction: row;  /* Side by side on desktop */
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .filter-button {
-    flex: 0 1 auto;  /* Don't grow on desktop */
+    flex-direction: row;
   }
 }
 </style> 

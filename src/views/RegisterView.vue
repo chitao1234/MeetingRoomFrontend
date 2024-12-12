@@ -1,6 +1,6 @@
 <template>
-  <div class="register-container">
-    <form @submit.prevent="handleRegister" class="register-form">
+  <div class="auth-container">
+    <form @submit.prevent="handleRegister" class="auth-form">
       <h2>Register</h2>
       <div class="form-group">
         <label for="username">Username</label>
@@ -80,62 +80,6 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-.register-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-
-.register-form {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: white;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #2c3e50;
-}
-
-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #a8d5c2;
-  cursor: not-allowed;
-}
-
-.error {
-  color: #dc3545;
-  margin-top: 1rem;
-  text-align: center;
-}
-
 .login-link {
   margin-top: 1rem;
   text-align: center;
