@@ -110,6 +110,8 @@
               <th>ID</th>
               <th>Name</th>
               <th>Capacity</th>
+              <th>Area (m²)</th>
+              <th>Room Number</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -118,6 +120,8 @@
               <td>{{ room.meetingRoomId }}</td>
               <td>{{ room.name }}</td>
               <td>{{ room.capacity }}</td>
+              <td>{{ room.area || '-' }}</td>
+              <td>{{ room.roomNumber }}</td>
               <td>
                 <button @click="editRoom(room)">Edit</button>
                 <button @click="deleteRoom(room.meetingRoomId)" class="danger">Delete</button>
@@ -138,6 +142,10 @@
             <div class="form-group">
               <label for="room-capacity">Capacity:</label>
               <input id="room-capacity" v-model="newRoom.capacity" type="number" required />
+            </div>
+            <div class="form-group">
+              <label for="room-area">Area (m²):</label>
+              <input id="room-area" v-model="newRoom.area" type="number" min="0" step="0.1" />
             </div>
             <div class="form-group">
               <label for="room-number">Room Number:</label>
@@ -170,6 +178,10 @@
             <div class="form-group">
               <label for="edit-room-capacity">Capacity:</label>
               <input id="edit-room-capacity" v-model="editingRoom.capacity" type="number" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-room-area">Area (m²):</label>
+              <input id="edit-room-area" v-model="editingRoom.area" type="number" min="0" step="0.1" />
             </div>
             <div class="form-group">
               <label for="edit-room-number">Room Number:</label>
@@ -213,7 +225,7 @@
             <tr v-for="reservation in reservations" :key="reservation.reservationId">
               <td>{{ reservation.reservationId }}</td>
               <td>{{ reservation.meetingRoomId }}</td>
-              <td>{{ reservation.userId }}</td>
+              <td>{{ getUserName(reservation.userId) }}</td>
               <td>{{ reservation.meetingSubject }}</td>
               <td>{{ formatDateTime(reservation.startTime) }}</td>
               <td>{{ formatDateTime(reservation.endTime) }}</td>
@@ -227,7 +239,7 @@
                 </button>
                 <button 
                   v-if="reservation.status === 'PENDING'"
-                  @click="rejectReservation(reservation.reservationId)"
+                  @click="openRejectModal(reservation.reservationId)"
                   class="danger"
                 >
                   Reject
@@ -236,6 +248,28 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <!-- Reject Reservation Modal -->
+      <div v-if="showRejectModal" class="modal">
+        <div class="modal-content">
+          <h3>Reject Reservation</h3>
+          <form @submit.prevent="submitRejectReservation">
+            <div class="form-group">
+              <label for="reject-reason">Rejection Reason:</label>
+              <textarea 
+                id="reject-reason" 
+                v-model="rejectReason" 
+                required
+                rows="3"
+                placeholder="Please provide a reason for rejection"
+              ></textarea>
+            </div>
+            <div class="modal-actions">
+              <button type="submit">Confirm Reject</button>
+              <button type="button" class="danger" @click="showRejectModal = false">Cancel</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -282,6 +316,7 @@ export default defineComponent({
     const showCreateRoomModal = ref(false)
     const showEditUserModal = ref(false)
     const showEditRoomModal = ref(false)
+    const showRejectModal = ref(false)
     const newUser = ref({
       username: '',
       password: '',
@@ -292,12 +327,15 @@ export default defineComponent({
     const newRoom = ref({
       name: '',
       capacity: 0,
+      area: undefined as number | undefined,
       roomNumber: '',
       photoUrl: '',
       description: ''
     })
     const editingUser = ref<Partial<User>>({})
     const editingRoom = ref<Partial<MeetingRoom>>({})
+    const rejectReason = ref('')
+    const rejectingReservationId = ref<number | null>(null)
 
     const loadUsers = async () => {
       try {
@@ -364,12 +402,20 @@ export default defineComponent({
       }
     }
 
-    const rejectReservation = async (reservationId: number) => {
-      const reason = prompt('Please enter a reason for rejection:')
-      if (reason) {
+    const openRejectModal = (reservationId: number) => {
+      rejectingReservationId.value = reservationId
+      rejectReason.value = ''
+      showRejectModal.value = true
+    }
+
+    const submitRejectReservation = async () => {
+      if (rejectingReservationId.value && rejectReason.value) {
         try {
-          await adminApi.rejectReservation(reservationId, reason)
+          await adminApi.rejectReservation(rejectingReservationId.value, rejectReason.value)
           await loadReservations()
+          showRejectModal.value = false
+          rejectingReservationId.value = null
+          rejectReason.value = ''
         } catch (error) {
           console.error('Failed to reject reservation:', error)
         }
@@ -392,7 +438,7 @@ export default defineComponent({
         await adminApi.createRoom(newRoom.value)
         showCreateRoomModal.value = false
         await loadRooms()
-        newRoom.value = { name: '', capacity: 0, roomNumber: '', photoUrl: '', description: '' }
+        newRoom.value = { name: '', capacity: 0, area: undefined, roomNumber: '', photoUrl: '', description: '' }
       } catch (error) {
         console.error('Failed to create room:', error)
       }
@@ -418,6 +464,11 @@ export default defineComponent({
       }
     }
 
+    const getUserName = (userId: number): string => {
+      const user = users.value.find(u => u.userId === userId)
+      return user ? user.username : `User ${userId}`
+    }
+
     onMounted(() => {
       loadUsers()
       loadRooms()
@@ -434,7 +485,7 @@ export default defineComponent({
       editRoom,
       editUser,
       approveReservation,
-      rejectReservation,
+      openRejectModal,
       formatDateTime,
       showCreateUserModal,
       showCreateRoomModal,
@@ -447,7 +498,11 @@ export default defineComponent({
       editingUser,
       editingRoom,
       saveUserEdit,
-      saveRoomEdit
+      saveRoomEdit,
+      getUserName,
+      showRejectModal,
+      rejectReason,
+      submitRejectReservation,
     }
   }
 })
@@ -583,5 +638,14 @@ tbody tr:hover {
 td button {
   min-width: 80px;
   margin: 2px 4px;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 80px;
 }
 </style> 

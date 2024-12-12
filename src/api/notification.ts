@@ -4,10 +4,10 @@ export interface Notification {
   notificationId: number
   userId: number
   title: string
-  message: string
-  type: string
+  content: string
   isRead: boolean
-  createdAt: string
+  createdTime?: string
+  updatedTime?: string
 }
 
 export async function getNotification(notificationId: number): Promise<Notification> {

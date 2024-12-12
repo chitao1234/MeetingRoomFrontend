@@ -4,8 +4,12 @@ export interface User {
   userId: number
   username: string
   email: string
-  phone: string
+  phone?: string
   role: string
+  lastLoginTime?: string
+  createdTime?: string
+  updatedTime?: string
+  avatarUrl?: string
 }
 
 export async function getAllUsers(): Promise<User[]> {

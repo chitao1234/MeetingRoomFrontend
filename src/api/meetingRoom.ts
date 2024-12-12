@@ -5,7 +5,10 @@ export interface MeetingRoom {
   capacity: number
   roomNumber: string
   description: string
+  area?: number
   photoUrl?: string
+  createdTime?: string
+  updatedTime?: string
 }
 
 interface SearchMeetingRoomsParams {

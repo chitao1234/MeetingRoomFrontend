@@ -10,6 +10,9 @@ export interface Reservation {
   participantCount: number
   status: string
   rejectionReason?: string
+  createdTime?: string
+  updatedTime?: string
+  approvalTime?: string
 }
 
 export async function getReservation(reservationId: number): Promise<Reservation> {
@@ -34,7 +37,7 @@ export async function getRoomReservations(
 }
 
 export async function createReservation(reservation: Omit<Reservation, 'reservationId'>): Promise<Reservation> {
-  const response = await api.post('/reservations', reservation)
+  const response = await api.post('/reservations/create', reservation)
   return response.data
 }
 

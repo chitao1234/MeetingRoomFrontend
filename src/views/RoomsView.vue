@@ -56,6 +56,7 @@
         <h3>{{ room.name }}</h3>
         <p class="room-number">Room: {{ room.roomNumber }}</p>
         <p class="capacity">Capacity: {{ room.capacity }} people</p>
+        <p class="area" v-if="room.area">Size: {{ room.area }} m²</p>
         <p class="description">{{ room.description }}</p>
         <button 
           class="book-button" 
@@ -338,8 +339,13 @@ onMounted(searchRooms)
 }
 
 .modal-actions button[type="button"] {
-  background: #f8f9fa;
-  border: 1px solid #ddd;
+  background: #e0e0e0;
+  border: none;
+  color: #666;
+}
+
+.modal-actions button[type="button"]:hover {
+  background: #d0d0d0;
 }
 
 .modal-actions button[type="submit"] {
@@ -404,5 +410,10 @@ onMounted(searchRooms)
   background: #f8f9fa;
   padding: 0.5rem;
   border-radius: 4px;
+}
+
+.area {
+  color: #666;
+  margin: 0.5rem 0;
 }
 </style> 
