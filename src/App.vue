@@ -1,25 +1,27 @@
 <template>
-  <div class="app">
+  <div class="container">
     <!-- Desktop nav -->
     <nav v-if="isAuthenticated" class="desktop-nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/rooms">Meeting Rooms</router-link> |
-      <router-link to="/bookings">My Bookings</router-link>
-      <template v-if="isAdmin">| <router-link to="/admin">Admin</router-link></template>
-      <button @click="logout" class="logout-btn">Logout</button>
+      <div class="nav-links">
+        <router-link class="nav-link" to="/">Home</router-link> |
+        <router-link class="nav-link" to="/rooms">Meeting Rooms</router-link> |
+        <router-link class="nav-link" to="/bookings">My Bookings</router-link>
+        <template v-if="isAdmin">| <router-link class="nav-link" to="/admin">Admin</router-link></template>
+      </div>
+      <button @click="logout" class="btn btn-danger">Logout</button>
     </nav>
 
     <!-- Mobile nav -->
     <nav v-if="isAuthenticated" class="mobile-nav">
-      <button class="menu-btn" @click="showMobileMenu = !showMobileMenu">
+      <button class="btn btn-primary menu-btn" @click="showMobileMenu = !showMobileMenu">
         ☰
       </button>
       <div class="mobile-menu" :class="{ active: showMobileMenu }">
-        <router-link to="/" @click="showMobileMenu = false">Home</router-link>
-        <router-link to="/rooms" @click="showMobileMenu = false">Meeting Rooms</router-link>
-        <router-link to="/bookings" @click="showMobileMenu = false">My Bookings</router-link>
-        <router-link v-if="isAdmin" to="/admin" @click="showMobileMenu = false">Admin</router-link>
-        <button @click="logout" class="logout-btn">Logout</button>
+        <router-link class="nav-link" to="/" @click="showMobileMenu = false">Home</router-link>
+        <router-link class="nav-link" to="/rooms" @click="showMobileMenu = false">Meeting Rooms</router-link>
+        <router-link class="nav-link" to="/bookings" @click="showMobileMenu = false">My Bookings</router-link>
+        <router-link class="nav-link" v-if="isAdmin" to="/admin" @click="showMobileMenu = false">Admin</router-link>
+        <button @click="logout" class="btn btn-danger w-100">Logout</button>
       </div>
     </nav>
 
@@ -65,88 +67,60 @@ const logout = async () => {
 }
 </script>
 
-<style>
-.app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
+<style scoped>
 /* Desktop Navigation */
 .desktop-nav {
   display: none;
   padding: 1rem 0;
   margin-bottom: 2rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.desktop-nav a {
-  margin: 0 0.5rem;
-  text-decoration: none;
-  color: #2c3e50;
-  transition: color 0.3s;
-}
-
-.desktop-nav a:hover {
-  color: #42b983;
-}
-
-.desktop-nav a.router-link-active {
-  color: #42b983;
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 /* Mobile Navigation */
 .mobile-nav {
   display: block;
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .menu-btn {
-  background: #42b983;
-  border: none;
   font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  color: white;
+  padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s;
-}
-
-.menu-btn:hover {
-  background: #3aa876;
+  min-width: 3rem;
+  aspect-ratio: 1;
 }
 
 .mobile-menu {
-  display: none;
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow);
   border-radius: 4px;
-  padding: 0.5rem;
+  padding: 0.75rem;
   z-index: 1000;
-}
-
-.mobile-menu.active {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.mobile-menu a {
-  padding: 0.5rem;
-  text-decoration: none;
-  color: #2c3e50;
-}
-
-.mobile-menu .logout-btn {
-  width: 100%;
-  margin-top: 0.5rem;
+.mobile-menu.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Media Queries */
@@ -156,21 +130,7 @@ const logout = async () => {
   }
   
   .desktop-nav {
-    display: block;
+    display: flex;
   }
-  
-  .app {
-    padding: 2rem;
-  }
-}
-
-.logout-btn {
-  float: right;
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 </style>
