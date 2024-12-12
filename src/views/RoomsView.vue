@@ -277,6 +277,14 @@ onMounted(searchRooms)
   box-shadow: var(--shadow);
 }
 
+.room-photo {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
 .room-card h3 {
   margin: 0 0 1rem;
   color: var(--text-color);
