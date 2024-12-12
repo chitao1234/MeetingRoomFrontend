@@ -1,13 +1,13 @@
 <template>
-  <div class="bookings">
-    <h1>My Bookings</h1>
+  <div class="container p-4">
+    <h1 class="mb-4">My Bookings</h1>
     
     <!-- Booking filters -->
-    <div class="filters">
+    <div class="flex flex-wrap gap-2 mb-4">
       <button 
         v-for="status in ['ALL', 'PENDING', 'APPROVED', 'REJECTED']" 
         :key="status"
-        :class="['filter-button', { active: selectedStatus === status }]"
+        :class="['btn', selectedStatus === status ? 'btn-primary' : 'btn-secondary']"
         @click="selectedStatus = status"
       >
         {{ status }}
@@ -15,17 +15,17 @@
     </div>
 
     <!-- Bookings list -->
-    <div class="bookings-list">
+    <div class="grid gap-4">
       <div v-for="booking in filteredBookings" :key="booking.reservationId" class="card">
-        <div class="booking-header">
-          <h3>{{ booking.meetingSubject }}</h3>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+          <h3 class="mb-2 md:mb-0">{{ booking.meetingSubject }}</h3>
           <span :class="['status-badge', booking.status.toLowerCase()]">
             {{ booking.status }}
           </span>
         </div>
         
-        <div class="booking-details">
-          <div class="time-details">
+        <div class="mb-4">
+          <div class="grid gap-2 mb-3">
             <template v-if="isDifferentDay(booking.startTime, booking.endTime)">
               <p>
                 <strong>Start:</strong> 
@@ -47,14 +47,14 @@
               </p>
             </template>
           </div>
-          <p><strong>Room:</strong> {{ booking.roomNumber }}</p>
-          <p><strong>Attendees:</strong> {{ booking.participantCount }}</p>
-          <p v-if="booking.rejectionReason" class="rejection-reason">
+          <p class="mb-2"><strong>Room:</strong> {{ booking.roomNumber }}</p>
+          <p class="mb-2"><strong>Attendees:</strong> {{ booking.participantCount }}</p>
+          <p v-if="booking.rejectionReason" class="error mb-2">
             <strong>Rejection Reason:</strong> {{ booking.rejectionReason }}
           </p>
         </div>
 
-        <div class="booking-actions">
+        <div class="flex justify-end">
           <button 
             v-if="booking.status === 'PENDING'"
             class="btn btn-danger"
@@ -158,52 +158,4 @@ async function cancelBooking(reservationId: number) {
 }
 
 onMounted(loadBookings)
-</script>
-
-<style scoped>
-.bookings {
-  padding: 2rem;
-}
-
-h1 {
-  color: #2c3e50;
-  margin-bottom: 2rem;
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.bookings-list {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.booking-header {
-  flex-direction: column;
-  gap: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.booking-details {
-  margin-bottom: 1.5rem;
-}
-
-.time-details {
-  display: grid;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 768px) {
-  .booking-header {
-    flex-direction: row;
-  }
-}
-</style> 
+</script> 

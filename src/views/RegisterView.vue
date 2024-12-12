@@ -1,7 +1,7 @@
 <template>
-  <div class="auth-container">
-    <form @submit.prevent="handleRegister" class="auth-form">
-      <h2>Register</h2>
+  <div class="flex justify-center items-center min-h-80vh">
+    <form @submit.prevent="handleRegister" class="card">
+      <h2 class="mb-4">Register</h2>
       <div class="form-group">
         <label for="username">Username</label>
         <input
@@ -38,11 +38,11 @@
           required
         />
       </div>
-      <button type="submit" :disabled="isLoading">
+      <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
         {{ isLoading ? 'Registering...' : 'Register' }}
       </button>
-      <p v-if="error" class="error">{{ error }}</p>
-      <p class="login-link">
+      <p v-if="error" class="error mt-3">{{ error }}</p>
+      <p class="text-center mt-3">
         Already have an account? <router-link to="/login">Login here</router-link>
       </p>
     </form>
@@ -77,20 +77,4 @@ const handleRegister = async () => {
     isLoading.value = false
   }
 }
-</script>
-
-<style scoped>
-.login-link {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.login-link a {
-  color: #42b983;
-  text-decoration: none;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-</style> 
+</script> 

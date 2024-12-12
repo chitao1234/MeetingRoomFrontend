@@ -1,11 +1,36 @@
 <template>
-  <div class="admin-page">
-    <h1>Admin Dashboard</h1>
+  <div class="container p-4">
+    <!-- Navigation -->
+    <div class="flex gap-3 mb-4">
+      <button 
+        @click="activeSection = 'users'"
+        :class="['btn', activeSection === 'users' ? 'btn-primary' : 'btn-secondary']"
+      >
+        Users
+      </button>
+      <button 
+        @click="activeSection = 'rooms'"
+        :class="['btn', activeSection === 'rooms' ? 'btn-primary' : 'btn-secondary']"
+      >
+        Rooms
+      </button>
+      <button 
+        @click="activeSection = 'reservations'"
+        :class="['btn', activeSection === 'reservations' ? 'btn-primary' : 'btn-secondary']"
+      >
+        Reservations
+      </button>
+    </div>
+
+    <h1 class="mb-4">Admin Dashboard</h1>
     
     <!-- User Management Section -->
-    <div class="section" v-if="activeSection === 'users'">
-      <h2>User Management</h2>
-      <button class="create-btn" @click="showCreateUserModal = true">Create User</button>
+    <div class="mb-5" v-if="activeSection === 'users'">
+      <div class="flex justify-between items-center mb-4">
+        <h2>User Management</h2>
+        <button class="btn btn-primary" @click="showCreateUserModal = true">Create User</button>
+      </div>
+      
       <div class="table-container">
         <table>
           <thead>
@@ -24,17 +49,20 @@
               <td>{{ user.email }}</td>
               <td>{{ user.role }}</td>
               <td>
-                <button @click="editUser(user)" class="btn btn-primary">Edit</button>
-                <button @click="deleteUser(user.userId)" class="btn btn-danger">Delete</button>
+                <div class="flex gap-2">
+                  <button @click="editUser(user)" class="btn btn-primary">Edit</button>
+                  <button @click="deleteUser(user.userId)" class="btn btn-danger">Delete</button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <!-- Create User Modal -->
       <div v-if="showCreateUserModal" class="modal">
         <div class="modal-content">
-          <h3>Create User</h3>
+          <h3 class="mb-4">Create User</h3>
           <form @submit.prevent="createNewUser">
             <div class="form-group">
               <label for="username">Username:</label>
@@ -66,10 +94,11 @@
           </form>
         </div>
       </div>
+
       <!-- Edit User Modal -->
       <div v-if="showEditUserModal" class="modal">
         <div class="modal-content">
-          <h3>Edit User</h3>
+          <h3 class="mb-4">Edit User</h3>
           <form @submit.prevent="saveUserEdit">
             <div class="form-group">
               <label for="edit-username">Username:</label>
@@ -100,9 +129,12 @@
     </div>
 
     <!-- Room Management Section -->
-    <div class="section" v-if="activeSection === 'rooms'">
-      <h2>Room Management</h2>
-      <button class="create-btn" @click="showCreateRoomModal = true">Create Room</button>
+    <div class="mb-5" v-if="activeSection === 'rooms'">
+      <div class="flex justify-between items-center mb-4">
+        <h2>Room Management</h2>
+        <button class="btn btn-primary" @click="showCreateRoomModal = true">Create Room</button>
+      </div>
+      
       <div class="table-container">
         <table>
           <thead>
@@ -123,17 +155,20 @@
               <td>{{ room.area || '-' }}</td>
               <td>{{ room.roomNumber }}</td>
               <td>
-                <button @click="editRoom(room)">Edit</button>
-                <button @click="deleteRoom(room.meetingRoomId)" class="danger">Delete</button>
+                <div class="flex gap-2">
+                  <button @click="editRoom(room)" class="btn btn-primary">Edit</button>
+                  <button @click="deleteRoom(room.meetingRoomId)" class="btn btn-danger">Delete</button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <!-- Create Room Modal -->
       <div v-if="showCreateRoomModal" class="modal">
         <div class="modal-content">
-          <h3>Create Room</h3>
+          <h3 class="mb-4">Create Room</h3>
           <form @submit.prevent="createNewRoom">
             <div class="form-group">
               <label for="room-name">Name:</label>
@@ -160,16 +195,17 @@
               <textarea id="room-description" v-model="newRoom.description"></textarea>
             </div>
             <div class="modal-actions">
-              <button type="submit">Create</button>
-              <button type="button" class="danger" @click="showCreateRoomModal = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Create</button>
+              <button type="button" class="btn btn-secondary" @click="showCreateRoomModal = false">Cancel</button>
             </div>
           </form>
         </div>
       </div>
+
       <!-- Edit Room Modal -->
       <div v-if="showEditRoomModal" class="modal">
         <div class="modal-content">
-          <h3>Edit Room</h3>
+          <h3 class="mb-4">Edit Room</h3>
           <form @submit.prevent="saveRoomEdit">
             <div class="form-group">
               <label for="edit-room-name">Name:</label>
@@ -196,8 +232,8 @@
               <textarea id="edit-room-description" v-model="editingRoom.description"></textarea>
             </div>
             <div class="modal-actions">
-              <button type="submit">Save</button>
-              <button type="button" class="danger" @click="showEditRoomModal = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-secondary" @click="showEditRoomModal = false">Cancel</button>
             </div>
           </form>
         </div>
@@ -205,8 +241,8 @@
     </div>
 
     <!-- Reservation Management Section -->
-    <div class="section" v-if="activeSection === 'reservations'">
-      <h2>Reservations</h2>
+    <div class="mb-5" v-if="activeSection === 'reservations'">
+      <h2 class="mb-4">Reservations</h2>
       <div class="table-container">
         <table>
           <thead>
@@ -229,70 +265,31 @@
               <td>{{ reservation.meetingSubject }}</td>
               <td>{{ formatDateTime(reservation.startTime) }}</td>
               <td>{{ formatDateTime(reservation.endTime) }}</td>
-              <td>{{ reservation.status }}</td>
               <td>
-                <button 
-                  v-if="reservation.status === 'PENDING'"
-                  @click="approveReservation(reservation.reservationId)"
-                >
-                  Approve
-                </button>
-                <button 
-                  v-if="reservation.status === 'PENDING'"
-                  @click="openRejectModal(reservation.reservationId)"
-                  class="danger"
-                >
-                  Reject
-                </button>
+                <span :class="['status-badge', reservation.status.toLowerCase()]">
+                  {{ reservation.status }}
+                </span>
+              </td>
+              <td>
+                <div class="flex gap-2" v-if="reservation.status === 'PENDING'">
+                  <button 
+                    class="btn btn-primary"
+                    @click="approveReservation(reservation.reservationId)"
+                  >
+                    Approve
+                  </button>
+                  <button 
+                    class="btn btn-danger"
+                    @click="openRejectModal(reservation.reservationId)"
+                  >
+                    Reject
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <!-- Reject Reservation Modal -->
-      <div v-if="showRejectModal" class="modal">
-        <div class="modal-content">
-          <h3>Reject Reservation</h3>
-          <form @submit.prevent="submitRejectReservation">
-            <div class="form-group">
-              <label for="reject-reason">Rejection Reason:</label>
-              <textarea 
-                id="reject-reason" 
-                v-model="rejectReason" 
-                required
-                rows="3"
-                placeholder="Please provide a reason for rejection"
-              ></textarea>
-            </div>
-            <div class="modal-actions">
-              <button type="submit">Confirm Reject</button>
-              <button type="button" class="danger" @click="showRejectModal = false">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Navigation -->
-    <div class="admin-nav">
-      <button 
-        @click="activeSection = 'users'"
-        :class="{ active: activeSection === 'users' }"
-      >
-        Users
-      </button>
-      <button 
-        @click="activeSection = 'rooms'"
-        :class="{ active: activeSection === 'rooms' }"
-      >
-        Rooms
-      </button>
-      <button 
-        @click="activeSection = 'reservations'"
-        :class="{ active: activeSection === 'reservations' }"
-      >
-        Reservations
-      </button>
     </div>
   </div>
 </template>

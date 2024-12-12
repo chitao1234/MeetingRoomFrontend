@@ -1,7 +1,7 @@
 <template>
-  <div class="auth-container">
-    <form @submit.prevent="handleLogin" class="auth-form">
-      <h2>Login</h2>
+  <div class="flex justify-center items-center min-h-80vh">
+    <form @submit.prevent="handleLogin" class="card">
+      <h2 class="mb-4">Login</h2>
       <div class="form-group">
         <label for="username">Username</label>
         <input
@@ -20,11 +20,11 @@
           required
         />
       </div>
-      <button type="submit" class="btn btn-primary" :disabled="isLoading">
+      <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
         {{ isLoading ? 'Logging in...' : 'Login' }}
       </button>
-      <p v-if="error" class="error">{{ error }}</p>
-      <p class="register-link">
+      <p v-if="error" class="error mt-3">{{ error }}</p>
+      <p class="text-center mt-3">
         Don't have an account? <router-link to="/register">Register here</router-link>
       </p>
     </form>
@@ -58,9 +58,4 @@ const handleLogin = async () => {
     isLoading.value = false
   }
 }
-</script>
-
-<style scoped>
-/* Remove duplicate styles that are now in main.css */
-/* Only keep unique styles if any */
-</style> 
+</script> 
