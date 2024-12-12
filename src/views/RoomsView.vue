@@ -5,51 +5,61 @@
     <!-- Search filters -->
     <div class="filters">
       <div class="form-group">
-        <label>Start Time</label>
+        <label>Start Time (optional)</label>
         <input 
           type="datetime-local" 
           v-model="filters.startDateTime" 
           :min="currentDateTime"
-          @change="searchRooms"
+          @change="resetSearch"
         >
       </div>
       <div class="form-group">
-        <label>End Time</label>
+        <label>End Time (optional)</label>
         <input 
           type="datetime-local" 
           v-model="filters.endDateTime"
           :min="filters.startDateTime"
-          @change="searchRooms"
+          @change="resetSearch"
         >
       </div>
       <div class="form-group">
-        <label>Attendees</label>
+        <label>Attendees (optional)</label>
         <input 
           type="number" 
           v-model="filters.attendees" 
           min="1" 
-          @change="searchRooms"
+          @change="resetSearch"
         >
       </div>
+      <button 
+        class="search-button" 
+        @click="searchRooms"
+        :disabled="!isQueryValid"
+      >
+        {{ isSearchValid && (filters.startDateTime || filters.endDateTime || filters.attendees) 
+          ? 'Search Available Rooms' 
+          : 'List Rooms' }}
+      </button>
     </div>
+
+    <p v-if="rooms.length > 0 && !hasSearched" class="info-message">
+      To book a room, please search with your time and attendee requirements first.
+    </p>
 
     <!-- Rooms list -->
     <div class="rooms-grid">
       <div v-for="room in rooms" :key="room.meetingRoomId" class="room-card">
+        <img v-if="room.photoUrl" :src="room.photoUrl" class="room-photo" alt="Room photo">
         <h3>{{ room.name }}</h3>
-        <p class="location">{{ room.location }}</p>
+        <p class="room-number">Room: {{ room.roomNumber }}</p>
         <p class="capacity">Capacity: {{ room.capacity }} people</p>
         <p class="description">{{ room.description }}</p>
-        <div class="equipment">
-          <strong>Equipment:</strong>
-          <p>{{ room.equipment }}</p>
-        </div>
         <button 
           class="book-button" 
           @click="openBookingModal(room)"
-          :disabled="!canBook"
+          :disabled="!hasSearched"
         >
-          {{ canBook ? 'Book Now' : 'Set time and attendees to book' }}
+          {{ hasSearched ? 'Book Now' : 'Set time and attendees to book' }}
         </button>
       </div>
     </div>
@@ -96,6 +106,7 @@ const rooms = ref<MeetingRoom[]>([])
 const selectedRoom = ref<MeetingRoom | null>(null)
 const showBookingModal = ref(false)
 const isLoading = ref(false)
+const hasSearched = ref(false)
 
 const currentDateTime = computed(() => {
   const now = new Date()
@@ -104,14 +115,9 @@ const currentDateTime = computed(() => {
 })
 
 const filters = reactive({
-  startDateTime: currentDateTime.value,
-  endDateTime: (() => {
-    const date = new Date()
-    date.setHours(date.getHours() + 1)
-    date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-    return date.toISOString().slice(0, 16)
-  })(),
-  attendees: 1
+  startDateTime: '',
+  endDateTime: '', 
+  attendees: null as number | null
 })
 
 const bookingForm = reactive({
@@ -119,29 +125,57 @@ const bookingForm = reactive({
   attendees: 1
 })
 
-const canBook = computed(() => {
-  return filters.startDateTime && 
-         filters.endDateTime && 
-         filters.attendees > 0 && 
-         filters.startDateTime < filters.endDateTime
+const isQueryValid = computed(() => {
+  // do not allow incomplete time range
+  if ((filters.startDateTime === '') !== (filters.endDateTime === '')) {
+    return false
+  }
+  if (filters.startDateTime && filters.endDateTime && filters.startDateTime >= filters.endDateTime) {
+    return false
+  }
+  if (filters.attendees && filters.attendees <= 0) {
+    return false
+  }
+  return true
+})
+
+
+const isSearchValid = computed(() => {
+  return filters.startDateTime && filters.endDateTime && filters.attendees && filters.attendees > 0 && filters.startDateTime < filters.endDateTime
 })
 
 async function searchRooms() {
   try {
-    rooms.value = await searchMeetingRooms({
-      startTime: filters.startDateTime,
-      endTime: filters.endDateTime,
-      attendees: filters.attendees
-    })
+    const searchParams: any = {}
+    
+    // Check if all criteria are set for a valid search
+    const isValidSearch = filters.startDateTime && 
+                         filters.endDateTime && 
+                         filters.attendees && 
+                         filters.attendees > 0 && 
+                         filters.startDateTime < filters.endDateTime
+
+    // Add any set criteria to search params
+    if (filters.startDateTime) searchParams.startTime = filters.startDateTime
+    if (filters.endDateTime) searchParams.endTime = filters.endDateTime
+    if (filters.attendees) searchParams.attendees = filters.attendees
+    // Only set hasSearched to true if it's a valid search
+    hasSearched.value = !!isValidSearch
+
+    rooms.value = await searchMeetingRooms(searchParams)
   } catch (error) {
     console.error('Failed to fetch rooms:', error)
   }
 }
 
+function resetSearch() {
+  hasSearched.value = false
+}
+
 function openBookingModal(room: MeetingRoom) {
-  if (!canBook.value) return
+  if (!hasSearched.value) return
   selectedRoom.value = room
-  bookingForm.attendees = filters.attendees
+  bookingForm.attendees = filters.attendees ?? 1 // Ensure attendees is a number
   showBookingModal.value = true
 }
 
@@ -225,7 +259,7 @@ onMounted(searchRooms)
   color: #2c3e50;
 }
 
-.location {
+.room-number {
   color: #666;
   font-style: italic;
 }
@@ -238,11 +272,6 @@ onMounted(searchRooms)
 .description {
   margin: 1rem 0;
   color: #2c3e50;
-}
-
-.equipment {
-  margin: 1rem 0;
-  font-size: 0.9rem;
 }
 
 .book-button {
@@ -324,6 +353,52 @@ onMounted(searchRooms)
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.room-photo {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 1rem;
+}
+
+.search-button {
+  align-self: flex-end;
+  padding: 0.5rem 1rem;
+  background: #42b983;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 38px;
+  transition: background-color 0.2s;
+}
+
+.search-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.search-button:hover:not(:disabled) {
+  background: #3aa876;
+}
+
+.search-message {
+  text-align: center;
+  color: #dc2626;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.info-message {
+  text-align: center;
+  color: #666;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  background: #f8f9fa;
+  padding: 0.5rem;
   border-radius: 4px;
 }
 </style> 

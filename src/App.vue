@@ -4,6 +4,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/rooms">Meeting Rooms</router-link> |
       <router-link to="/bookings">My Bookings</router-link>
+      <template v-if="isAdmin">| <router-link to="/admin">Admin</router-link></template>
       <button @click="logout" class="logout-btn">Logout</button>
     </nav>
     <router-view></router-view>
@@ -11,20 +12,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { checkAuth, logout as authLogout } from '@/api/auth'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { checkAuth, checkIsAdmin, logout as authLogout } from '@/api/auth'
 
 const router = useRouter()
+const route = useRoute()
 const isAuthenticated = ref(false)
+const isAdmin = ref(false)
+
+const checkAuthStatus = async () => {
+  isAuthenticated.value = await checkAuth()
+  if (isAuthenticated.value) {
+    isAdmin.value = await checkIsAdmin()
+  }
+}
 
 onMounted(async () => {
-  isAuthenticated.value = await checkAuth()
+  await checkAuthStatus()
 })
+
+// Watch for route changes to recheck auth status
+watch(
+  () => route.path,
+  async () => {
+    await checkAuthStatus()
+  }
+)
 
 const logout = async () => {
   await authLogout()
   isAuthenticated.value = false
+  isAdmin.value = false
   router.push('/login')
 }
 </script>

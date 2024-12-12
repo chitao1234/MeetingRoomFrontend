@@ -1,13 +1,31 @@
 <template>
-  <div class="login-container">
-    <form @submit.prevent="handleLogin" class="login-form">
-      <h2>Login</h2>
+  <div class="register-container">
+    <form @submit.prevent="handleRegister" class="register-form">
+      <h2>Register</h2>
       <div class="form-group">
         <label for="username">Username</label>
         <input
           type="text"
           id="username"
           v-model="credentials.username"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          v-model="credentials.email"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          type="tel"
+          id="phone"
+          v-model="credentials.phone"
           required
         />
       </div>
@@ -21,11 +39,11 @@
         />
       </div>
       <button type="submit" :disabled="isLoading">
-        {{ isLoading ? 'Logging in...' : 'Login' }}
+        {{ isLoading ? 'Registering...' : 'Register' }}
       </button>
       <p v-if="error" class="error">{{ error }}</p>
-      <p class="register-link">
-        Don't have an account? <router-link to="/register">Register here</router-link>
+      <p class="login-link">
+        Already have an account? <router-link to="/login">Login here</router-link>
       </p>
     </form>
   </div>
@@ -34,26 +52,27 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { login, type LoginCredentials, setAuthToken } from '@/api/auth'
+import { register, type RegisterCredentials } from '@/api/auth'
 
 const router = useRouter()
 const isLoading = ref(false)
 const error = ref('')
 
-const credentials = reactive<LoginCredentials>({
+const credentials = reactive<RegisterCredentials>({
   username: '',
-  password: ''
+  password: '',
+  email: '',
+  phone: ''
 })
 
-const handleLogin = async () => {
+const handleRegister = async () => {
   error.value = ''
   isLoading.value = true
   try {
-    const response = await login(credentials)
-    setAuthToken(response.token)
+    await register(credentials)
     router.push('/')
   } catch (e) {
-    error.value = 'Invalid username or password'
+    error.value = 'Registration failed. Please try again.'
   } finally {
     isLoading.value = false
   }
@@ -61,14 +80,14 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-container {
+.register-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 80vh;
 }
 
-.login-form {
+.register-form {
   width: 100%;
   max-width: 400px;
   padding: 2rem;
@@ -117,17 +136,17 @@ button:disabled {
   text-align: center;
 }
 
-.register-link {
+.login-link {
   margin-top: 1rem;
   text-align: center;
 }
 
-.register-link a {
+.login-link a {
   color: #42b983;
   text-decoration: none;
 }
 
-.register-link a:hover {
+.login-link a:hover {
   text-decoration: underline;
 }
 </style> 

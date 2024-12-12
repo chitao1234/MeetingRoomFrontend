@@ -1,20 +1,20 @@
 import api from './auth'
-
 export interface MeetingRoom {
   meetingRoomId: number
   name: string
   capacity: number
-  location: string
+  roomNumber: string
   description: string
-  equipment: string
-  status: string
+  photoUrl?: string
 }
 
-export async function searchMeetingRooms(params: {
-  attendees?: number
-  startTime?: string
-  endTime?: string
-}): Promise<MeetingRoom[]> {
+interface SearchMeetingRoomsParams {
+  startTime?: string;
+  endTime?: string;
+  attendees?: number;
+}
+
+export async function searchMeetingRooms(params: SearchMeetingRoomsParams): Promise<MeetingRoom[]> {
   const response = await api.get('/meeting-rooms', { params })
   return response.data
 }

@@ -131,6 +131,13 @@ h1 {
   background: white;
   cursor: pointer;
   transition: all 0.3s;
+  color: #2c3e50;
+}
+
+.filter-button:hover {
+  background: #42b983;
+  color: white;
+  border-color: #42b983;
 }
 
 .filter-button.active {

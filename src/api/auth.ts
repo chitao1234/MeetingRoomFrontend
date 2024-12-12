@@ -35,6 +35,7 @@ export interface RegisterCredentials {
 export interface AuthResponse {
   token: string
   userId: number
+  role: string
 }
 
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -45,6 +46,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
     // Store both token and userId
     localStorage.setItem('authToken', authResponse.token)
     localStorage.setItem('userId', authResponse.userId.toString())
+    localStorage.setItem('userRole', authResponse.role)
     
     // Set token in axios defaults
     api.defaults.headers.common['Authorization'] = `Bearer ${authResponse.token}`
@@ -63,6 +65,7 @@ export async function register(credentials: RegisterCredentials): Promise<AuthRe
     // Store both token and userId
     localStorage.setItem('authToken', authResponse.token)
     localStorage.setItem('userId', authResponse.userId.toString())
+    localStorage.setItem('userRole', authResponse.role)
     
     // Set token in axios defaults
     api.defaults.headers.common['Authorization'] = `Bearer ${authResponse.token}`
@@ -124,8 +127,18 @@ export async function checkAuth(): Promise<boolean> {
   }
   
   try {
-    return await validateToken(token)
+    const isValid = await validateToken(token)
+    return isValid
   } catch {
+    return false
+  }
+}
+
+export async function checkIsAdmin(): Promise<boolean> {
+  try {
+    const response = await api.get('/auth/check-admin')
+    return response.data
+  } catch (error) {
     return false
   }
 }
