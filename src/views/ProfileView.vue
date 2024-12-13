@@ -51,6 +51,48 @@
           />
         </div>
 
+        <div class="form-group mt-4">
+          <h3 class="text-center mb-3">{{ $t('message.changePassword') }}</h3>
+          
+          <div class="form-group">
+            <label for="currentPassword">{{ $t('message.currentPassword') }}</label>
+            <input 
+              type="password" 
+              id="currentPassword" 
+              v-model="passwordForm.currentPassword"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">{{ $t('message.newPassword') }}</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              v-model="passwordForm.newPassword"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">{{ $t('message.confirmPassword') }}</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              v-model="passwordForm.confirmPassword"
+            />
+          </div>
+
+          <div class="text-center mt-3">
+            <button 
+              type="button" 
+              class="btn btn-secondary"
+              @click="changePassword"
+              :disabled="!canChangePassword"
+            >
+              {{ $t('message.updatePassword') }}
+            </button>
+          </div>
+        </div>
+
         <div class="flex gap-3 justify-center mt-4">
           <button type="submit" class="btn btn-primary">
             {{ $t('message.saveChanges') }}
@@ -60,14 +102,25 @@
           </router-link>
         </div>
       </form>
+
+      <div v-if="showModal" class="modal">
+        <div class="modal-content">
+          <h3 class="text-center mb-3">{{ $t(`message.modal.${modalTitle}`) }}</h3>
+          <p class="text-center">{{ $t(`message.modal.${modalMessage}`) }}</p>
+          <div class="modal-actions">
+            <button class="btn btn-primary" @click="closeModal">{{ $t('message.modal.ok') }}</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUser, updateUser } from '@/api/user'
+import { updateUserPassword } from '@/api/auth'
 import { uploadFile } from '@/api/file'
 import type { User } from '@/api/user'
 import xidian from '@/assets/xidian.png'
@@ -81,6 +134,23 @@ const userForm = ref<Partial<User>>({
   phone: '',
   avatarUrl: ''
 })
+
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+const canChangePassword = computed(() => {
+  return passwordForm.value.currentPassword &&
+         passwordForm.value.newPassword &&
+         passwordForm.value.confirmPassword &&
+         passwordForm.value.newPassword === passwordForm.value.confirmPassword
+})
+
+const showModal = ref(false)
+const modalTitle = ref('')
+const modalMessage = ref('')
 
 onMounted(async () => {
   try {
@@ -112,7 +182,9 @@ const handleAvatarChange = async (event: Event) => {
       input.value = ''
     } catch (error) {
       console.error('Failed to upload avatar:', error)
-      // You might want to show an error message to the user
+      modalTitle.value = 'error'
+      modalMessage.value = 'avatarUploadFailed'
+      showModal.value = true
     }
   }
 }
@@ -124,7 +196,44 @@ const updateProfile = async () => {
     router.push('/')
   } catch (error) {
     console.error('Failed to update profile:', error)
+    modalTitle.value = 'error'
+    modalMessage.value = 'profileUpdateFailed'
+    showModal.value = true
   }
+}
+
+const changePassword = async () => {
+  if (!canChangePassword.value) return
+  
+  try {
+    const success = await updateUserPassword(passwordForm.value.currentPassword, passwordForm.value.newPassword)
+    if (success) {
+      modalTitle.value = 'success'
+      modalMessage.value = 'passwordUpdateSuccess'
+    } else {
+      modalTitle.value = 'error'
+      modalMessage.value = 'passwordUpdateFailed'
+    }
+    showModal.value = true
+    
+    // Clear the form only on success
+    if (success) {
+      passwordForm.value = {
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      }
+    }
+  } catch (error) {
+    console.error('Failed to update password:', error)
+    modalTitle.value = 'error'
+    modalMessage.value = 'passwordUpdateFailed'
+    showModal.value = true
+  }
+}
+
+const closeModal = () => {
+  showModal.value = false
 }
 </script>
 

@@ -143,5 +143,17 @@ export async function checkIsAdmin(): Promise<boolean> {
   }
 }
 
+export async function updateUserPassword(
+  oldPassword: string, 
+  newPassword: string
+): Promise<boolean> {
+  try {
+    const response = await api.post(`/auth/password`, { oldPassword, newPassword })
+    return response.data
+  } catch (error) {
+    return false
+  }
+}
+
 // Export the api instance for use in other modules
 export default api

@@ -90,6 +90,20 @@ const messages = {
       saveChanges: 'Save Changes',
       email: 'Email',
       phone: 'Phone',
+      changePassword: 'Change Password',
+      currentPassword: 'Current Password',
+      newPassword: 'New Password',
+      confirmPassword: 'Confirm Password',
+      updatePassword: 'Update Password',
+      modal: {
+        success: 'Success',
+        error: 'Error',
+        ok: 'OK',
+        passwordUpdateSuccess: 'Password updated successfully',
+        passwordUpdateFailed: 'Failed to update password',
+        profileUpdateFailed: 'Failed to update profile',
+        avatarUploadFailed: 'Failed to upload avatar',
+      },
       
       // Register
       registering: 'Registering...',
@@ -287,6 +301,20 @@ const messages = {
       saveChanges: '保存更改',
       email: '邮箱',
       phone: '电话',
+      changePassword: '修改密码',
+      currentPassword: '当前密码',
+      newPassword: '新密码',
+      confirmPassword: '确认密码',
+      updatePassword: '更新密码',
+      modal: {
+        success: '成功',
+        error: '错误',
+        ok: '确定',
+        passwordUpdateSuccess: '密码更新成功',
+        passwordUpdateFailed: '密码更新失败',
+        profileUpdateFailed: '个人资料更新失败',
+        avatarUploadFailed: '头像上传失败',
+      },
       
       // 注册
       registering: '正在注册...',

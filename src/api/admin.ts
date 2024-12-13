@@ -23,6 +23,13 @@ export async function deleteUser(userId: number): Promise<void> {
   await api.delete(`/users/${userId}`)
 }
 
+export async function updateUserPassword(
+  userId: number, 
+  newPassword: string
+): Promise<void> {
+  await api.put(`/users/${userId}/password`, newPassword)
+}
+
 // Room Management
 export async function getAllRooms(): Promise<MeetingRoom[]> {
   const response = await api.get('/meeting-rooms')
