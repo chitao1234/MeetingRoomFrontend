@@ -1,11 +1,20 @@
 <template>
   <div class="notifications">
     <div class="notifications-header">
-      <h3>Notifications</h3>
-      <button @click="markAllAsRead" v-if="hasUnread" class="btn btn-primary">Mark all as read</button>
+      <h3>{{ $t('message.notifications.title') }}</h3>
+      <button 
+        @click="markAllAsRead" 
+        v-if="hasUnread" 
+        class="btn btn-primary"
+      >
+        {{ $t('message.notifications.markAllAsRead') }}
+      </button>
     </div>
     
     <div class="notification-items">
+      <div v-if="sortedNotifications.length === 0" class="text-center p-4">
+        {{ $t('message.notifications.noNotifications') }}
+      </div>
       <div v-for="notification in sortedNotifications" 
            :key="notification.notificationId"
            :class="['card', { unread: !notification.isRead }]">
@@ -18,12 +27,12 @@
           <button v-if="!notification.isRead" 
                   class="btn btn-primary"
                   @click="markAsRead(notification.notificationId)">
-            Mark as read
+            {{ $t('message.notifications.markAsRead') }}
           </button>
           <button 
             class="btn btn-danger"
-             @click="deleteNotification(notification.notificationId)">
-            Delete
+            @click="deleteNotification(notification.notificationId)">
+            {{ $t('message.notifications.delete') }}
           </button>
         </div>
       </div>

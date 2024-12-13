@@ -186,6 +186,15 @@ const messages = {
         to: 'To:',
         apply: 'Apply',
         reset: 'Reset'
+      },
+      
+      // Notifications
+      notifications: {
+        title: 'Notifications',
+        markAllAsRead: 'Mark all as read',
+        markAsRead: 'Mark as read',
+        delete: 'Delete',
+        noNotifications: 'No notifications'
       }
     }
   },
@@ -374,6 +383,15 @@ const messages = {
         to: '至：',
         apply: '应用',
         reset: '重置'
+      },
+      
+      // 通知
+      notifications: {
+        title: '通知',
+        markAllAsRead: '全部标记为已读',
+        markAsRead: '标记为已读',
+        delete: '删除',
+        noNotifications: '暂无通知'
       }
     }
   }
